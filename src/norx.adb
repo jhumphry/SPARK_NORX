@@ -13,6 +13,15 @@ package body NORX is
 
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
 
+   type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
+   Domain_Separation : constant array (Domains range <>) of Word :=
+     (Header    => 16#01#,
+      Payload   => 16#02#,
+      Trailer   => 16#03#,
+      Tag       => 16#04#,
+      Branching => 16#10#,
+      Merging   => 16#20#);
+
    u : State; -- The initialisation constants
 
    function Get_Initialisation_Constants return State is (u);
