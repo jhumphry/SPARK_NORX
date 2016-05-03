@@ -15,4 +15,6 @@ package NORX.Access_Internals is
 
    function Get_Initialisation_Constants return State;
 
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
+
 end NORX.Access_internals;

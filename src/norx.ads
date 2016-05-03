@@ -30,6 +30,11 @@ generic
    c : Positive; --Capacity
 package NORX is
 
+   use System.Storage_Elements;
+
+   subtype Key_Type is Storage_Array(0..Storage_Offset(w/2)-1);
+   subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
+
 private
 
    -- These compile-time checks test requirements that cannot be expressed
@@ -55,6 +60,11 @@ private
 
    type State is array (Integer range 0..15) of Word;
 
+   -- These functions are not part of the public API, but a child package
+   -- NORX.Access_Internals can be used to expose them, in order to verify
+   -- the traces for test vectors.
    function Get_Initialisation_Constants return State;
+
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
 end NORX;

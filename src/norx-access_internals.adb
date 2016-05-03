@@ -28,4 +28,8 @@ package body NORX.Access_Internals is
    function Get_Initialisation_Constants return State is
       (State(NORX.Get_Initialisation_Constants));
 
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
+                        return State is
+      (State(NORX.Initialise(Key, Nonce)));
+
 end NORX.Access_Internals;

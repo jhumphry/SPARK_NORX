@@ -6,6 +6,13 @@
 
 package body NORX is
 
+   -- Constants used internally
+
+   p : constant Positive := 1; -- This implementation only supports parallelism
+                               --  of degree 1 i.e. only serial NORX
+
+   Bytes : constant Storage_Offset := Storage_Offset(w / 8);
+
    u : State; -- The initialisation constants
 
    function Get_Initialisation_Constants return State is (u);
@@ -45,6 +52,33 @@ package body NORX is
          G(S(3), S(4),  S(9), S(14));
       end loop;
    end F;
+
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
+                        return State is
+
+      N : constant array (Integer range 0..1) of Word :=
+        (Storage_Array_To_Word(Nonce(0..Bytes-1)),
+         Storage_Array_To_Word(Nonce(Bytes..2*Bytes-1)));
+
+      K : constant array (Integer range 0..3) of Word :=
+        (Storage_Array_To_Word(Key(0..Bytes-1)),
+         Storage_Array_To_Word(Key(Bytes..2*Bytes-1)),
+         Storage_Array_To_Word(Key(2*Bytes..3*Bytes-1)),
+         Storage_Array_To_Word(Key(3*Bytes..4*Bytes-1)));
+
+      S : State := (N( 0), N( 1), u( 2), u( 3),
+                    K( 0), K( 1), K( 2), K( 3),
+                    u( 8), u( 9), u(10), u(11),
+                    u(12), u(13), u(14), u(15));
+
+   begin
+      S(12) := S(12) xor Word(w);
+      S(13) := S(13) xor Word(l);
+      S(14) := S(14) xor Word(p);
+      S(15) := S(15) xor Word(t);
+      F(S, l);
+      return S;
+   end Initialise;
 
 begin
 
