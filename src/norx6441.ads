@@ -17,4 +17,6 @@ package NORX6441 is new NORX(w                     => 64,
                              -- Storage_Array_To_Word => ,
                              l                     => 4,
                              t                     => 256,
-                             r                     => (8, 19, 40, 63));
+                             rot                   => (8, 19, 40, 63),
+                             r                     => 768,
+                             c                     => 256);

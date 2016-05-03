@@ -23,7 +23,9 @@ generic
       Amount : Natural) return Word is <>;
    l : Round_Number; -- Round number 1 ≤ l ≤ 63
    t : Positive; -- Tag size t ≤ 4w
-   r : Rotation_Offsets;
+   rot : Rotation_Offsets;
+   r : Positive; -- Rate
+   c : Positive; --Capacity
 package NORX is
 
 private
@@ -35,12 +37,18 @@ private
    pragma Compile_Time_Error (2**w /= Word'Modulus,
                               "The specified type Word must have the same " &
                                 "'Modulus as the word width parameter w**2");
-   pragma Compile_Time_Error (t > 4*w,
+   pragma Compile_Time_Error (t > 4 * w,
                               "The specified tag size t must be less than or " &
                                 "equal to 4*w, the word size");
+   pragma Compile_Time_Error (r + c /= 16 * w,
+                              "The total of the rate (r) and capacity (c) do " &
+                                "not equal 16*w, the word size");
+   pragma Compile_Time_Error (r mod w /= 0 or c mod w /= 0,
+                              "The rate (r) and capacity (c) are not " &
+                                "multiples of the word size");
    pragma Compile_Time_Error (System.Storage_Elements.Storage_Element'Size /= 8,
                               "This implementation of NORX cannot work " &
-                                "with Storage_Element'Size /= 8.");
+                                "with Storage_Element'Size /= 8");
    pragma Warnings (GNATprove, On, "Compile_Time_Error");
 
    type State is array (Integer range 0..15) of Word;

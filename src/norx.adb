@@ -20,13 +20,13 @@ package body NORX is
 
    begin
       a := H(a, b);
-      d := Rotate_Right(a xor d, r(0));
+      d := Rotate_Right(a xor d, rot(0));
       c := H(c, d);
-      b := Rotate_Right(b xor c, r(1));
+      b := Rotate_Right(b xor c, rot(1));
       a := H(a, b);
-      d := Rotate_Right(a xor d, r(2));
+      d := Rotate_Right(a xor d, rot(2));
       c := H(c, d);
-      b := Rotate_Right(b xor c, r(3));
+      b := Rotate_Right(b xor c, rot(3));
    end G;
 
    procedure F (S : in out State; Rounds : in Round_Number) is
