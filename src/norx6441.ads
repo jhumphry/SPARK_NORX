@@ -9,12 +9,14 @@
 
 with Interfaces;
 with NORX;
+with NORX_Load_Store;
 
 use all type Interfaces.Unsigned_64;
 
 package NORX6441 is new NORX(w                     => 64,
                              Word                  => Interfaces.Unsigned_64,
-                             -- Storage_Array_To_Word => ,
+                             Storage_Array_To_Word => NORX_Load_Store.Storage_Array_To_Unsigned_64,
+                             Word_To_Storage_Array => NORX_Load_Store.Unsigned_64_To_Storage_Array,
                              l                     => 4,
                              t                     => 256,
                              rot                   => (8, 19, 40, 63),

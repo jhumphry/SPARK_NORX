@@ -13,8 +13,10 @@ use NORX_Definitions;
 generic
    w : Word_Size; -- Word size w ∈ { 32, 64 }
    type Word is mod <>; -- Word'Modulus must equal w**2
---     with function Storage_Array_To_Word
---       (S : in System.Storage_Elements.Storage_Array) return Word;
+   with function Storage_Array_To_Word
+     (S : in System.Storage_Elements.Storage_Array) return Word;
+   with function Word_To_Storage_Array
+     (W : in Word) return System.Storage_Elements.Storage_Array;
    with function Rotate_Right
      (Value  : Word;
       Amount : Natural) return Word is <>;
