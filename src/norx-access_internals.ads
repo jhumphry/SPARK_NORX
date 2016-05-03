@@ -11,6 +11,8 @@ package NORX.Access_Internals is
    -- Duplicate definition can't be helped, unfortunately.
    type State is array (Integer range 0..15) of Word;
 
+   procedure Put_State(S : in State);
+
    function Get_Initialisation_Constants return State;
 
 end NORX.Access_internals;
