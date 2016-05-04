@@ -4,7 +4,6 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
-with Interfaces;
 with System.Storage_Elements;
 use System.Storage_Elements;
 
@@ -23,12 +22,11 @@ procedure NORX_Test_Vectors is
    K : Storage_Array(0..31);
    N : Storage_Array(0..15);
    A, M, Z : Storage_Array(0..127);
+   pragma Unreferenced (Z);
 
 begin
    Put_Line("NORX Test Vectors");
    New_Line;
-
-   Put_Line("NORX6441: 64-bit words, 4 rounds, no parallelisation");
 
    Put_Line("Initialising input data as per A.2 of the NORX specification");
    for I in K'Range loop
@@ -44,8 +42,9 @@ begin
       M(I) := Storage_Element(I);
       Z(I) := Storage_Element(I);
    end loop;
-
    New_Line;
+
+   Put_Line("NORX6441: 64-bit words, 4 rounds, no parallelisation");
 
    Put_Line("Check initialisation constants:");
    Put_State(Init_Constants);
