@@ -67,4 +67,6 @@ private
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
+
 end NORX;

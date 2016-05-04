@@ -56,4 +56,9 @@ begin
    Put_State(State_Trace);
    New_Line;
 
+   Put_Line("Absorb header into state:");
+   Absorb(State_Trace, A, 16#01#);
+   Put_State(State_Trace);
+   New_Line;
+
 end NORX_Test_Vectors;

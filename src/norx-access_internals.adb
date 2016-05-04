@@ -32,4 +32,9 @@ package body NORX.Access_Internals is
                         return State is
       (State(NORX.Initialise(Key, Nonce)));
 
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
+   begin
+      NORX.Absorb(NORX.State(S), X, v);
+   end Absorb;
+
 end NORX.Access_Internals;

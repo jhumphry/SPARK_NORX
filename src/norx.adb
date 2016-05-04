@@ -12,6 +12,8 @@ package body NORX is
                                --  of degree 1 i.e. only serial NORX
 
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
+   Rate_Bytes : constant Integer := (r / 8);
+   Rate_Words : constant Integer := r / w;
 
    type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
    Domain_Separation : constant array (Domains range <>) of Word :=
@@ -88,6 +90,50 @@ package body NORX is
       F(S, l);
       return S;
    end Initialise;
+
+   function Pad_r (X : in Storage_Array) return Storage_Array
+     with Inline, Pre=> (X'Length <= Rate_Bytes) is
+      Result : Storage_Array(1..Storage_Offset(Rate_Bytes));
+   begin
+      Result(1..X'Length) := X;
+      Result(Storage_Offset(X'Length+1)..Storage_Offset(Rate_Bytes))
+        := (others => 0);
+      return Result;
+   end Pad_r;
+
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
+      m : constant Natural := X'Length / Rate_Bytes;
+      Last_Block_Length : constant Natural := X'Length mod Rate_Bytes;
+      X_Index : Storage_Offset := X'First;
+   begin
+      if X'Length > 0 then
+
+         for I in 1..m loop
+            S(15) := S(15) xor v;
+            F(S, l);
+            for J in 0..Rate_Words-1 loop
+               S(J) := S(J) xor
+                 Storage_Array_To_Word(X(X_Index..X_Index+Bytes-1));
+               X_Index := X_Index + Bytes;
+            end loop;
+         end loop;
+
+         if Last_Block_Length /= 0 then
+            S(15) := S(15) xor v;
+            F(S, l);
+            declare
+               Last_Block : constant Storage_Array := Pad_r(X(X_Index..X'Last));
+               Last_Block_Index : Storage_Offset := Last_Block'First;
+            begin
+               for J in Integer range 0..Rate_Words-1 loop
+                  S(J) := S(J) xor
+                    Storage_Array_To_Word(Last_Block(Last_Block_Index..Last_Block_Index+Bytes-1));
+                  Last_Block_Index := Last_Block_Index + Bytes;
+               end loop;
+            end;
+         end if;
+      end if;
+   end Absorb;
 
 begin
 
