@@ -13,6 +13,10 @@ package body NORX.Access_Internals is
      Ada.Text_IO.Modular_IO(Num => Word);
    use Unsigned_64_IO;
 
+   package Storage_Text_IO is new
+     Ada.Text_IO.Modular_IO(Num => Storage_Element);
+   use Storage_Text_IO;
+
    procedure Put_State(S : in State) is
    begin
       for I in S'Range loop
@@ -24,5 +28,15 @@ package body NORX.Access_Internals is
          end if;
       end loop;
    end Put_State;
+
+   procedure Put_Storage_Array(X : in Storage_Array) is
+   begin
+      for I in X'Range loop
+         Put(X(I), Base => 16, Width => 7);
+         if I mod 16 = 15 then
+            New_Line;
+         end if;
+      end loop;
+   end Put_Storage_Array;
 
 end NORX.Access_Internals;
