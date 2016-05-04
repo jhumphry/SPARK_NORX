@@ -52,6 +52,9 @@ private
    pragma Compile_Time_Error (t > 4 * w,
                               "The specified tag size t must be less than or " &
                                 "equal to 4*w, the word size");
+   pragma Compile_Time_Error (t mod w /= 0,
+                              "The specified tag size t is not a multiple of " &
+                                "w, the word size");
    pragma Compile_Time_Error (r + c /= 16 * w,
                               "The total of the rate (r) and capacity (c) do " &
                                 "not equal 16*w, the word size");
