@@ -8,8 +8,7 @@
 generic
 package NORX.Access_Internals is
 
-   -- Duplicate definition can't be helped, unfortunately.
-   type State is array (Integer range 0..15) of Word;
+   subtype State is NORX.State;
 
    procedure Put_State(S : in State);
 
@@ -18,5 +17,16 @@ package NORX.Access_Internals is
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
+
+private
+
+   function Get_Initialisation_Constants return State
+     renames NORX.Get_Initialisation_Constants;
+
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State
+                        renames NORX.Initialise;
+
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word)
+                     renames NORX.Absorb;
 
 end NORX.Access_internals;

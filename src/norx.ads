@@ -35,6 +35,11 @@ package NORX is
    subtype Key_Type is Storage_Array(0..Storage_Offset(w/2)-1);
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
 
+
+   -- This type declaration makes the NORX.Access_Internals package easier to
+   -- write. It is not intended for regular use.
+   type State is private;
+
 private
 
    -- These compile-time checks test requirements that cannot be expressed
