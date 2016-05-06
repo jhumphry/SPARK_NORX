@@ -83,6 +83,12 @@ private
                       v : in Word)
      with Pre => (C'Length = M'Length);
 
+   procedure Decrypt (S : in out State;
+                      C : in Storage_Array;
+                      M : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
 end NORX;

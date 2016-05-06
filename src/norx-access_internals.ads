@@ -22,6 +22,12 @@ package NORX.Access_Internals is
                       v : in Word)
      with Pre => (C'Length = M'Length);
 
+   procedure Decrypt (S : in out State;
+                      C : in Storage_Array;
+                      M : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
 private
@@ -39,6 +45,11 @@ private
                       M : in Storage_Array;
                       C : out Storage_Array;
                       v : in Word) renames NORX.Encrypt;
+
+   procedure Decrypt (S : in out State;
+                      C : in Storage_Array;
+                      M : out Storage_Array;
+                      v : in Word) renames NORX.Decrypt;
 
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word)
      renames NORX.Finalise;

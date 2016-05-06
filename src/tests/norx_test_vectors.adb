@@ -29,6 +29,9 @@ procedure NORX_Test_Vectors is
    C : Storage_Array(0..127);
    T : NORX6441.Tag_Type;
 
+   M2 : Storage_Array(0..127);
+   T2 : NORX6441.Tag_Type;
+
 begin
    Put_Line("NORX Test Vectors");
    New_Line;
@@ -57,6 +60,9 @@ begin
 
    Put_Line("Check initialisation constants:");
    Put_State(Init_Constants);
+   New_Line;
+
+   Put_Line("*** ENCRYPTION *** ");
    New_Line;
 
    State_Trace := Initialise(K, N);
@@ -88,6 +94,35 @@ begin
    Put_Storage_Array(C);
    Put_Line("Tag:");
    Put_Storage_Array(T);
+   New_Line;
+
+   Put_Line("*** DECRYPTION *** ");
+   New_Line;
+
+   State_Trace := Initialise(K, N);
+   Put_Line("Initialise state with key and nonce");
+
+   Absorb(State_Trace, A, 16#01#);
+   Put_Line("Absorb header into state");
+
+   Decrypt(State_Trace, C, M2, 16#02#);
+   Put_Line("Decrypt test message");
+
+   Absorb(State_Trace, Z, 16#04#);
+   Put_Line("Absorb trailer into state");
+
+   Finalise(State_Trace, T2, 16#08#);
+   Put_Line("Finalise state");
+   New_Line;
+
+   Put_Line("Recovered plaintext:");
+   Put_Storage_Array(M2);
+   Put_Line("Recovered Tag:");
+   Put_Storage_Array(T2);
+   New_Line;
+
+   Put_Line((if M /= M2 then "Plaintexts don't match" else "Plaintexts match"));
+   Put_Line((if T /= T2 then "Tags don't match" else "Tags match"));
    New_Line;
 
 end NORX_Test_Vectors;
