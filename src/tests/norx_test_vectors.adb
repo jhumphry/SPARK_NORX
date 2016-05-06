@@ -4,125 +4,28 @@
 
 with Ada.Text_IO;
 use Ada.Text_IO;
-with System.Storage_Elements;
-use System.Storage_Elements;
+
+with Display_NORX_Traces;
 
 with NORX6441;
-with NORX.Access_Internals;
-with NORX.Utils;
+with NORX3241;
 
 procedure NORX_Test_Vectors is
 
-   package NORX6441_Internals is new NORX6441.Access_Internals;
-   use NORX6441_Internals;
+   procedure NORX3241_Display is
+     new Display_NORX_Traces(NORX_Package => NORX3241);
 
-   package NORX6441_Utils is new NORX6441.Utils;
-   use NORX6441_Utils;
-
-   Init_Constants : constant State := Get_Initialisation_Constants;
-
-   State_Trace : State;
-
-   K : Storage_Array(0..31);
-   N : Storage_Array(0..15);
-   A, M, Z : Storage_Array(0..127);
-   C : Storage_Array(0..127);
-   T : NORX6441.Tag_Type;
-
-   M2 : Storage_Array(0..127);
-   T2 : NORX6441.Tag_Type;
+   procedure NORX6441_Display is
+     new Display_NORX_Traces(NORX_Package => NORX6441);
 
 begin
    Put_Line("NORX Test Vectors");
    New_Line;
 
-   Put_Line("Initialising input data as per A.2 of the NORX specification");
-   for I in K'Range loop
-      K(I) := Storage_Element(I);
-   end loop;
+   Put_Line("NORX32-4-1");
+   NORX3241_Display;
 
-   for I in N'Range loop
-      N(I) := (15 - Storage_Element(I)) * 16;
-   end loop;
-
-   for I in A'Range loop
-      A(I) := Storage_Element(I);
-      M(I) := Storage_Element(I);
-      Z(I) := Storage_Element(I);
-   end loop;
-   New_Line;
-
-   Put_Line("Plaintext:");
-   Put_Storage_Array(M);
-   New_Line;
-
-   Put_Line("NORX6441: 64-bit words, 4 rounds, no parallelisation");
-
-   Put_Line("Check initialisation constants:");
-   Put_State(Init_Constants);
-   New_Line;
-
-   Put_Line("*** ENCRYPTION *** ");
-   New_Line;
-
-   State_Trace := Initialise(K, N);
-   Put_Line("Initialise state with key and nonce:");
-   Put_State(State_Trace);
-   New_Line;
-
-   Absorb(State_Trace, A, 16#01#);
-   Put_Line("Absorb header into state:");
-   Put_State(State_Trace);
-   New_Line;
-
-   Encrypt(State_Trace, M, C, 16#02#);
-   Put_Line("Encrypt test message. State:");
-   Put_State(State_Trace);
-   New_Line;
-
-   Absorb(State_Trace, Z, 16#04#);
-   Put_Line("Absorb trailer into state:");
-   Put_State(State_Trace);
-   New_Line;
-
-   Finalise(State_Trace, T, 16#08#);
-   Put_Line("Finalise state:");
-   Put_State(State_Trace);
-   New_Line;
-
-   Put_Line("Ciphertext:");
-   Put_Storage_Array(C);
-   Put_Line("Tag:");
-   Put_Storage_Array(T);
-   New_Line;
-
-   Put_Line("*** DECRYPTION *** ");
-   New_Line;
-
-   State_Trace := Initialise(K, N);
-   Put_Line("Initialise state with key and nonce");
-
-   Absorb(State_Trace, A, 16#01#);
-   Put_Line("Absorb header into state");
-
-   Decrypt(State_Trace, C, M2, 16#02#);
-   Put_Line("Decrypt test message");
-
-   Absorb(State_Trace, Z, 16#04#);
-   Put_Line("Absorb trailer into state");
-
-   Finalise(State_Trace, T2, 16#08#);
-   Put_Line("Finalise state");
-   New_Line;
-
-   Put_Line("Recovered plaintext:");
-   Put_Storage_Array(M2);
-   Put_Line("Recovered Tag:");
-   Put_Storage_Array(T2);
-   New_Line;
-
-   Put_Line((if M /= M2 then "Plaintexts don't match" else "Plaintexts match"));
-   Put_Line((if T /= T2 then "Tags don't match" else "Tags match"));
-   New_Line;
+   Put_Line("NORX64-4-1");
+   NORX6441_Display;
 
 end NORX_Test_Vectors;

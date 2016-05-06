@@ -1,4 +1,6 @@
--- NORX32_Test_Vectors
+-- Display_NORX_Traces
+-- A utility to display traces of the encryption process for the test vectors
+-- suggested in Appendix A of the NORX specification
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
@@ -7,36 +9,31 @@ use Ada.Text_IO;
 with System.Storage_Elements;
 use System.Storage_Elements;
 
-with NORX3241;
 with NORX.Access_Internals;
 with NORX.Utils;
 
-procedure NORX32_Test_Vectors is
+procedure Display_NORX_Traces is
 
-   package NORX3241_Internals is new NORX3241.Access_Internals;
-   use NORX3241_Internals;
+   package NORX_Internals is new NORX_Package.Access_Internals;
+   use NORX_Internals;
 
-   package NORX3241_Utils is new NORX3241.Utils;
-   use NORX3241_Utils;
+   package NORX_Utils is new NORX_Package.Utils;
+   use NORX_Utils;
 
    Init_Constants : constant State := Get_Initialisation_Constants;
 
    State_Trace : State;
 
-   K : Storage_Array(0..15);
-   N : Storage_Array(0..7);
+   K : NORX_Package.Key_Type;
+   N : NORX_Package.Nonce_Type;
    A, M, Z : Storage_Array(0..127);
    C : Storage_Array(0..127);
-   T : NORX3241.Tag_Type;
+   T : NORX_Package.Tag_Type;
 
    M2 : Storage_Array(0..127);
-   T2 : NORX3241.Tag_Type;
+   T2 : NORX_Package.Tag_Type;
 
 begin
-   Put_Line("NORX 32-bit Test Vectors");
-   New_Line;
-
-   Put_Line("Initialising input data as per A.2 of the NORX specification");
    for I in K'Range loop
       K(I) := Storage_Element(I);
    end loop;
@@ -51,12 +48,6 @@ begin
       Z(I) := Storage_Element(I);
    end loop;
    New_Line;
-
-   Put_Line("Plaintext:");
-   Put_Storage_Array(M);
-   New_Line;
-
-   Put_Line("NORX3241: 32-bit words, 4 rounds, no parallelisation");
 
    Put_Line("Check initialisation constants:");
    Put_State(Init_Constants);
@@ -125,4 +116,4 @@ begin
    Put_Line((if T /= T2 then "Tags don't match" else "Tags match"));
    New_Line;
 
-end NORX32_Test_Vectors;
+end Display_NORX_Traces;
