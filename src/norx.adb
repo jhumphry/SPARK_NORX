@@ -92,12 +92,13 @@ package body NORX is
    end Initialise;
 
    function Pad_r (X : in Storage_Array) return Storage_Array
-     with Inline, Pre=> (X'Length <= Rate_Bytes) is
+     with Inline, Pre=> (X'Length < Rate_Bytes) is
       Result : Storage_Array(1..Storage_Offset(Rate_Bytes));
    begin
       Result(1..X'Length) := X;
-      Result(Storage_Offset(X'Length+1)..Storage_Offset(Rate_Bytes))
-        := (others => 0);
+      Result(X'Length + 1) := 16#01#;
+      Result(X'Length + 2 .. Storage_Offset(Rate_Bytes) - 1) := (others => 0);
+      Result(Storage_Offset(Rate_Bytes)) := 16#80#;
       return Result;
    end Pad_r;
 
@@ -118,7 +119,6 @@ package body NORX is
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
       Number_Full_Blocks : constant Natural := X'Length / Rate_Bytes;
-      Last_Block_Length : constant Natural := X'Length mod Rate_Bytes;
       X_Index : Storage_Offset := X'First;
    begin
       if X'Length > 0 then
@@ -130,9 +130,8 @@ package body NORX is
             X_Index := X_Index + Storage_Offset(Rate_Bytes);
          end loop;
 
-         if Last_Block_Length /= 0 then
-            Absorb_Block(S, Pad_r(X(X_Index..X'Last)), v);
-         end if;
+         Absorb_Block(S, Pad_r(X(X_Index..X'Last)), v);
+
       end if;
    end Absorb;
 
