@@ -20,6 +20,14 @@ package NORX.Access_Internals is
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
 
+   procedure Encrypt (S : in out State;
+                      M : in Storage_Array;
+                      C : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
+
 private
 
    function Get_Initialisation_Constants return State
@@ -30,5 +38,13 @@ private
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word)
                      renames NORX.Absorb;
+
+   procedure Encrypt (S : in out State;
+                      M : in Storage_Array;
+                      C : out Storage_Array;
+                      v : in Word) renames NORX.Encrypt;
+
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word)
+     renames NORX.Finalise;
 
 end NORX.Access_internals;

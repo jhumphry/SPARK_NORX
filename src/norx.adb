@@ -14,6 +14,7 @@ package body NORX is
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
    Rate_Bytes : constant Integer := (r / 8);
    Rate_Words : constant Integer := r / w;
+   Tag_Words : constant Integer := t / w;
 
    type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
    Domain_Separation : constant array (Domains range <>) of Word :=
@@ -134,6 +135,68 @@ package body NORX is
 
       end if;
    end Absorb;
+
+   procedure Encrypt_Block (S : in out State;
+                            M : in Storage_Array;
+                            C : out Storage_Array;
+                            v : in Word)
+     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
+      M_Index : Storage_Offset := M'First;
+      C_Index : Storage_Offset := C'First;
+   begin
+      S(15) := S(15) xor v;
+      F(S, l);
+      for I in 0..Rate_Words - 1 loop
+         S(I) := S(I) xor
+           Storage_Array_To_Word(M(M_Index .. M_Index + Bytes - 1));
+         C(C_Index .. C_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+         M_Index := M_Index + Bytes;
+         C_Index := C_Index + Bytes;
+      end loop;
+   end Encrypt_Block;
+
+   procedure Encrypt (S : in out State;
+                      M : in Storage_Array;
+                      C : out Storage_Array;
+                      v : in Word) is
+      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes;
+      M_Index : Storage_Offset := M'First;
+      C_Index : Storage_Offset := C'First;
+   begin
+      if M'Length > 0 then
+         for I in 1..Number_Full_Blocks loop
+            Encrypt_Block(S => S,
+                          M => M(M_Index..M_Index+Storage_Offset(Rate_Bytes)-1),
+                          C => C(C_Index..C_Index+Storage_Offset(Rate_Bytes)-1),
+                          v => v);
+            M_Index := M_Index + Storage_Offset(Rate_Bytes);
+            C_Index := C_Index + Storage_Offset(Rate_Bytes);
+         end loop;
+
+         declare
+            Last_M: constant Storage_Array := Pad_r(M(M_Index..M'Last));
+            Last_C : Storage_Array(1..Storage_Offset(Rate_Bytes));
+         begin
+            Encrypt_Block(S => S,
+                          M => Last_M,
+                          C => Last_C,
+                          v => v);
+            C(C_Index..C'Last) := Last_C(1..(C'Last - C_Index)+1);
+         end;
+
+      end if;
+   end Encrypt;
+
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word) is
+      Tag_Index : Storage_Offset := Tag'First;
+   begin
+      S(15) := S(15) xor v;
+      F(S, l * 2);
+      for I in 0 .. Tag_Words-1 loop
+         Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+         Tag_Index := Tag_Index + Bytes;
+      end loop;
+   end Finalise;
 
 begin
 

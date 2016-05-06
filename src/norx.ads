@@ -34,7 +34,7 @@ package NORX is
 
    subtype Key_Type is Storage_Array(0..Storage_Offset(w/2)-1);
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
-
+   subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for regular use.
@@ -76,5 +76,13 @@ private
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
+
+   procedure Encrypt (S : in out State;
+                      M : in Storage_Array;
+                      C : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
 end NORX;

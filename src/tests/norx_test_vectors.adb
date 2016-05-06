@@ -22,7 +22,8 @@ procedure NORX_Test_Vectors is
    K : Storage_Array(0..31);
    N : Storage_Array(0..15);
    A, M, Z : Storage_Array(0..127);
-   pragma Unreferenced (Z);
+   C : Storage_Array(0..127);
+   T : NORX6441.Tag_Type;
 
 begin
    Put_Line("NORX Test Vectors");
@@ -44,20 +45,45 @@ begin
    end loop;
    New_Line;
 
+   Put_Line("Plaintext:");
+   Put_Storage_Array(M);
+   New_Line;
+
    Put_Line("NORX6441: 64-bit words, 4 rounds, no parallelisation");
 
    Put_Line("Check initialisation constants:");
    Put_State(Init_Constants);
    New_Line;
 
-   Put_Line("Initialise state with key and nonce:");
    State_Trace := Initialise(K, N);
+   Put_Line("Initialise state with key and nonce:");
    Put_State(State_Trace);
    New_Line;
 
-   Put_Line("Absorb header into state:");
    Absorb(State_Trace, A, 16#01#);
+   Put_Line("Absorb header into state:");
    Put_State(State_Trace);
+   New_Line;
+
+   Encrypt(State_Trace, M, C, 16#02#);
+   Put_Line("Encrypt test message. State:");
+   Put_State(State_Trace);
+   New_Line;
+
+   Absorb(State_Trace, Z, 16#04#);
+   Put_Line("Absorb trailer into state:");
+   Put_State(State_Trace);
+   New_Line;
+
+   Finalise(State_Trace, T, 16#08#);
+   Put_Line("Finalise state:");
+   Put_State(State_Trace);
+   New_Line;
+
+   Put_Line("Ciphertext:");
+   Put_Storage_Array(C);
+   Put_Line("Tag:");
+   Put_Storage_Array(T);
    New_Line;
 
 end NORX_Test_Vectors;
