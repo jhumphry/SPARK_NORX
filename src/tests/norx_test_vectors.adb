@@ -9,11 +9,15 @@ use System.Storage_Elements;
 
 with NORX6441;
 with NORX.Access_Internals;
+with NORX.Utils;
 
 procedure NORX_Test_Vectors is
 
    package NORX6441_Internals is new NORX6441.Access_Internals;
    use NORX6441_Internals;
+
+   package NORX6441_Utils is new NORX6441.Utils;
+   use NORX6441_Utils;
 
    Init_Constants : constant State := Get_Initialisation_Constants;
 

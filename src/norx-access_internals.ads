@@ -10,10 +10,6 @@ package NORX.Access_Internals is
 
    subtype State is NORX.State;
 
-   procedure Put_State(S : in State);
-
-   procedure Put_Storage_Array(X : in Storage_Array);
-
    function Get_Initialisation_Constants return State;
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;

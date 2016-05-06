@@ -1,13 +1,12 @@
--- NORX.Access_Internals
--- Allow access to some internal parts of NORX for testing and verification
--- purposes. Not part of the standard API
+-- NORX.Utils
+-- Some utility routines useful when writing the examples.
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
 with Ada.Text_IO;
 use Ada.Text_IO;
 
-package body NORX.Access_Internals is
+package body NORX.Utils is
 
    package Unsigned_64_IO is new
      Ada.Text_IO.Modular_IO(Num => Word);
@@ -39,4 +38,4 @@ package body NORX.Access_Internals is
       end loop;
    end Put_Storage_Array;
 
-end NORX.Access_Internals;
+end NORX.Utils;
