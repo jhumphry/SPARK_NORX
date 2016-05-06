@@ -53,31 +53,31 @@ begin
    Put_State(Init_Constants);
    New_Line;
 
-   Put_Line("*** ENCRYPTION *** ");
+   Put_Line("ENCRYPTION");
    New_Line;
 
    State_Trace := Initialise(K, N);
-   Put_Line("Initialise state with key and nonce:");
+   Put_Line("State after initialisation (with key and nonce):");
    Put_State(State_Trace);
    New_Line;
 
    Absorb(State_Trace, A, 16#01#);
-   Put_Line("Absorb header into state:");
+   Put_Line("State after header processing:");
    Put_State(State_Trace);
    New_Line;
 
    Encrypt(State_Trace, M, C, 16#02#);
-   Put_Line("Encrypt test message. State:");
+   Put_Line("State after message encryption:");
    Put_State(State_Trace);
    New_Line;
 
    Absorb(State_Trace, Z, 16#04#);
-   Put_Line("Absorb trailer into state:");
+   Put_Line("State after trailer processing:");
    Put_State(State_Trace);
    New_Line;
 
    Finalise(State_Trace, T, 16#08#);
-   Put_Line("Finalise state:");
+   Put_Line("State after finalisation:");
    Put_State(State_Trace);
    New_Line;
 
@@ -87,23 +87,23 @@ begin
    Put_Storage_Array(T);
    New_Line;
 
-   Put_Line("*** DECRYPTION *** ");
+   Put_Line("DECRYPTION");
    New_Line;
 
    State_Trace := Initialise(K, N);
    Put_Line("Initialise state with key and nonce");
 
    Absorb(State_Trace, A, 16#01#);
-   Put_Line("Absorb header into state");
+   Put_Line("Absorbing header into state");
 
    Decrypt(State_Trace, C, M2, 16#02#);
-   Put_Line("Decrypt test message");
+   Put_Line("Decrypting message");
 
    Absorb(State_Trace, Z, 16#04#);
-   Put_Line("Absorb trailer into state");
+   Put_Line("Absorbing trailer into state");
 
    Finalise(State_Trace, T2, 16#08#);
-   Put_Line("Finalise state");
+   Put_Line("Finalising state");
    New_Line;
 
    Put_Line("Recovered plaintext:");
