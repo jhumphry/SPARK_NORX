@@ -5,8 +5,8 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
-package NORX_Definitions is
-   pragma Pure;
+package NORX_Definitions
+with Pure, SPARK_Mode => On is
 
    subtype Word_Size is Integer
      with Static_Predicate => Word_Size in 8 | 16 | 32 | 64;

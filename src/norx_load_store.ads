@@ -12,8 +12,8 @@ use System.Storage_Elements;
 with Interfaces;
 use Interfaces;
 
-package NORX_Load_Store is
-   pragma Pure;
+package NORX_Load_Store
+  with Pure, SPARK_Mode => On is
 
    subtype E is Storage_Element;
    subtype Storage_Array_Single is Storage_Array(1..1);
