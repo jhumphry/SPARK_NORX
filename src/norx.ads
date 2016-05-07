@@ -24,7 +24,9 @@ generic
      (Value  : Word;
       Amount : Natural) return Word is <>;
    l : Round_Number; -- Round number 1 ≤ l ≤ 63
-   t : Positive; -- Tag size t ≤ 4w
+   k : Positive; -- Key size
+   t : Positive; -- Tag size (t ≤ 4w for NORX32 and NORX64)
+   n : Positive; -- Nonce size
    rot : Rotation_Offsets;
    r : Positive; -- Rate
    c : Positive; --Capacity
@@ -32,8 +34,8 @@ package NORX is
 
    use System.Storage_Elements;
 
-   subtype Key_Type is Storage_Array(0..Storage_Offset(w/2)-1);
-   subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
+   subtype Key_Type is Storage_Array(0..Storage_Offset(k/8)-1);
+   subtype Nonce_Type is Storage_Array(0..Storage_Offset(n/8)-1);
    subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
 
    -- High-level API for NORX
@@ -97,17 +99,26 @@ private
    pragma Compile_Time_Error (2**w /= Word'Modulus,
                               "The specified type Word must have the same " &
                                 "'Modulus as the word width parameter w**2");
-   pragma Compile_Time_Error (t > 4 * w,
-                              "The specified tag size t must be less than or " &
-                                "equal to 4*w, the word size");
+   pragma Compile_Time_Error (k mod w /= 0,
+                              "The specified key size k is not a multiple of " &
+                                "w, the word size");
    pragma Compile_Time_Error (t mod w /= 0,
                               "The specified tag size t is not a multiple of " &
                                 "w, the word size");
+   pragma Compile_Time_Error (t > 2*r,
+                              "The specified tag size t is more than 2*r, " &
+                                "the rate");
+   pragma Compile_Time_Error (n mod w /= 0,
+                              "The specified nonce size n is not a multiple " &
+                                "of w, the word size");
+   pragma Compile_Time_Error (n > 4*w,
+                              "The specified nonce size n is greater than " &
+                                "4*w, the word size");
    pragma Compile_Time_Error (r + c /= 16 * w,
                               "The total of the rate (r) and capacity (c) do " &
                                 "not equal 16*w, the word size");
    pragma Compile_Time_Error (r mod w /= 0 or c mod w /= 0,
-                              "The rate (r) and capacity (c) are not " &
+                              "The rate r and capacity c are not " &
                                 "multiples of the word size");
    pragma Compile_Time_Error (System.Storage_Elements.Storage_Element'Size /= 8,
                               "This implementation of NORX cannot work " &

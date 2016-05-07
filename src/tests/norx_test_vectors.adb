@@ -7,12 +7,20 @@ use Ada.Text_IO;
 
 with Display_NORX_Traces;
 
+with NORX0841;
+with NORX1641;
 with NORX3241;
 with NORX3261;
 with NORX6441;
 with NORX6461;
 
 procedure NORX_Test_Vectors is
+
+   procedure NORX0841_Display is
+     new Display_NORX_Traces(NORX_Package => NORX0841);
+
+   procedure NORX1641_Display is
+     new Display_NORX_Traces(NORX_Package => NORX1641);
 
    procedure NORX3241_Display is
      new Display_NORX_Traces(NORX_Package => NORX3241);
@@ -29,6 +37,16 @@ procedure NORX_Test_Vectors is
 begin
    Put_Line("NORX Test Vectors");
    New_Line;
+
+   Put_Line("----------");
+   Put_Line("NORX08-4-1");
+   Put_Line("----------");
+   NORX0841_Display;
+
+   Put_Line("----------");
+   Put_Line("NORX16-4-1");
+   Put_Line("----------");
+   NORX1641_Display;
 
    Put_Line("----------");
    Put_Line("NORX32-4-1");

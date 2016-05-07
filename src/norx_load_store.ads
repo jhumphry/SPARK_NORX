@@ -16,6 +16,29 @@ package NORX_Load_Store is
    pragma Pure;
 
    subtype E is Storage_Element;
+   subtype Storage_Array_Single is Storage_Array(1..1);
+
+   function Storage_Array_To_Unsigned_8 (S : in Storage_Array)
+                                         return Unsigned_8 is
+     (Unsigned_8(S(S'First)))
+   with Inline, Pre => (S'Length = 1);
+
+   function Unsigned_8_To_Storage_Array (W : in Unsigned_8)
+                                         return Storage_Array is
+     (Storage_Array_Single'(Storage_Array_Single'First => E(W)))
+   with Inline;
+
+   function Storage_Array_To_Unsigned_16 (S : in Storage_Array)
+                                          return Unsigned_16 is
+     (Unsigned_16(S(S'First)) or
+        Shift_Left(Unsigned_16(S(S'First + 1)), 8))
+   with Inline, Pre => (S'Length = 2);
+
+   function Unsigned_16_To_Storage_Array (W : in Unsigned_16)
+                                          return Storage_Array is
+     (Storage_Array'(E(W mod 16#100#),
+                     E(Shift_Right(W, 8) mod 16#100#)))
+   with Inline;
 
    function Storage_Array_To_Unsigned_32 (S : in Storage_Array)
                                           return Unsigned_32 is
@@ -31,7 +54,7 @@ package NORX_Load_Store is
                      E(Shift_Right(W, 8) mod 16#100#),
                      E(Shift_Right(W, 16) mod 16#100#),
                      E(Shift_Right(W, 24) mod 16#100#)))
-     with Inline;
+   with Inline;
 
    function Storage_Array_To_Unsigned_64 (S : in Storage_Array)
                                           return Unsigned_64 is

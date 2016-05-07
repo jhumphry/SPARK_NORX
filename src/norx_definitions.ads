@@ -9,7 +9,7 @@ package NORX_Definitions is
    pragma Pure;
 
    subtype Word_Size is Integer
-     with Static_Predicate => Word_Size in 32 | 64;
+     with Static_Predicate => Word_Size in 8 | 16 | 32 | 64;
 
    subtype Round_Number is Integer range 1..63;
 

@@ -16,7 +16,9 @@ package body NORX is
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
    Rate_Bytes : constant Integer := (r / 8);
    Rate_Words : constant Integer := r / w;
+   Key_Words : constant Integer := k / w;
    Tag_Words : constant Integer := t / w;
+   Nonce_Words : constant Integer := n / w;
 
    type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
    Domain_Separation : constant array (Domains range <>) of Word :=
@@ -127,23 +129,25 @@ package body NORX is
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
                         return State is
-
-      N : constant array (Integer range 0..1) of Word :=
-        (Storage_Array_To_Word(Nonce(0..Bytes-1)),
-         Storage_Array_To_Word(Nonce(Bytes..2*Bytes-1)));
-
-      K : constant array (Integer range 0..3) of Word :=
-        (Storage_Array_To_Word(Key(0..Bytes-1)),
-         Storage_Array_To_Word(Key(Bytes..2*Bytes-1)),
-         Storage_Array_To_Word(Key(2*Bytes..3*Bytes-1)),
-         Storage_Array_To_Word(Key(3*Bytes..4*Bytes-1)));
-
-      S : State := (N( 0), N( 1), u( 2), u( 3),
-                    K( 0), K( 1), K( 2), K( 3),
-                    u( 8), u( 9), u(10), u(11),
-                    u(12), u(13), u(14), u(15));
-
+      S : State := u;
    begin
+      for I in 0..Nonce_Words-1 loop
+         S(I) :=
+           Storage_Array_To_Word(Nonce(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+      end loop;
+
+      if w = 16 then
+         for I in 0..Key_Words-1 loop
+            S(I + 2) :=
+              Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+         end loop;
+      else
+         for I in 0..Key_Words-1 loop
+            S(I + 4) :=
+              Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+         end loop;
+      end if;
+
       S(12) := S(12) xor Word(w);
       S(13) := S(13) xor Word(l);
       S(14) := S(14) xor Word(p);
@@ -324,10 +328,23 @@ package body NORX is
       S(15) := S(15) xor v;
       F_l(S);
       F_l(S);
-      for I in 0 .. Tag_Words-1 loop
-         Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
-         Tag_Index := Tag_Index + Bytes;
-      end loop;
+      if Tag_Words <= Rate_Words then
+         for I in 0 .. Tag_Words-1 loop
+            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+            Tag_Index := Tag_Index + Bytes;
+         end loop;
+      else
+         for I in 0 .. Rate_Words-1 loop
+            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+            Tag_Index := Tag_Index + Bytes;
+         end loop;
+         S(15) := S(15) xor v;
+         F_l(S);
+         for I in 0 .. Tag_Words - Rate_Words - 1 loop
+            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+            Tag_Index := Tag_Index + Bytes;
+         end loop;
+      end if;
    end Finalise;
 
    -- ***
