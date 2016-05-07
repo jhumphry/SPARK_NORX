@@ -86,6 +86,7 @@ begin
    Put_Line("Tag:");
    Put_Storage_Array(T);
    New_Line;
+   New_Line;
 
    Put_Line("DECRYPTION");
    New_Line;
@@ -112,8 +113,12 @@ begin
    Put_Storage_Array(T2);
    New_Line;
 
-   Put_Line((if M /= M2 then "Plaintexts don't match" else "Plaintexts match"));
-   Put_Line((if T /= T2 then "Tags don't match" else "Tags match"));
+   Put_Line((if M /= M2
+            then "ERROR :Plaintexts don't match"
+            else "Plaintexts match"));
+   Put_Line((if T /= T2
+            then "ERROR: Tags don't match"
+            else "Tags match"));
    New_Line;
 
 end Display_NORX_Traces;
