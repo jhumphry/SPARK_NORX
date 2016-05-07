@@ -49,9 +49,10 @@ package body NORX is
       b := Rotate_Right(b xor c, rot(3));
    end G;
 
-   procedure F (S : in out State; Rounds : in Round_Number) is
+   procedure F_l (S : in out State)
+   with Inline is
    begin
-      for I in 1..Rounds loop
+      for I in 1..l loop
          -- Column
          G(S(0), S(4),  S(8), S(12));
          G(S(1), S(5),  S(9), S(13));
@@ -64,7 +65,27 @@ package body NORX is
          G(S(2), S(7),  S(8), S(13));
          G(S(3), S(4),  S(9), S(14));
       end loop;
-   end F;
+   end F_l;
+
+   procedure F_2 (S : in out State) is
+      -- The initialisation constants are set up by two rounds of the diffusion
+      -- regardless of the number of rounds l
+
+   begin
+      for I in 1..2 loop
+         -- Column
+         G(S(0), S(4),  S(8), S(12));
+         G(S(1), S(5),  S(9), S(13));
+         G(S(2), S(6), S(10), S(14));
+         G(S(3), S(7), S(11), S(15));
+
+         -- Diagonal
+         G(S(0), S(5), S(10), S(15));
+         G(S(1), S(6), S(11), S(12));
+         G(S(2), S(7),  S(8), S(13));
+         G(S(3), S(4),  S(9), S(14));
+      end loop;
+   end F_2;
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
                         return State is
@@ -89,7 +110,7 @@ package body NORX is
       S(13) := S(13) xor Word(l);
       S(14) := S(14) xor Word(p);
       S(15) := S(15) xor Word(t);
-      F(S, l);
+      F_l(S);
       return S;
    end Initialise;
 
@@ -111,7 +132,7 @@ package body NORX is
       X_Index : Storage_Offset := X'First;
    begin
       S(15) := S(15) xor v;
-      F(S, l);
+      F_l(S);
       for I in 0..Rate_Words - 1 loop
          S(I) := S(I) xor
            Storage_Array_To_Word(X(X_Index .. X_Index + Bytes - 1));
@@ -146,7 +167,7 @@ package body NORX is
       C_Index : Storage_Offset := C'First;
    begin
       S(15) := S(15) xor v;
-      F(S, l);
+      F_l(S);
       for I in 0..Rate_Words - 1 loop
          S(I) := S(I) xor
            Storage_Array_To_Word(M(M_Index .. M_Index + Bytes - 1));
@@ -198,7 +219,7 @@ package body NORX is
       C_Index : Storage_Offset := C'First;
    begin
       S(15) := S(15) xor v;
-      F(S, l);
+      F_l(S);
       for I in 0..Rate_Words - 1 loop
          C_i := Storage_Array_To_Word(C(C_Index .. C_Index + Bytes - 1));
          M(M_Index .. M_Index + Bytes - 1) := Word_To_Storage_Array(S(I) xor C_i);
@@ -220,7 +241,7 @@ package body NORX is
       Index : Storage_Offset := Last_Block'First;
    begin
       S(15) := S(15) xor v;
-      F(S, l);
+      F_l(S);
 
       for I in 0..Rate_Words-1 loop
          Last_Block(Index .. Index + Bytes-1) := Word_To_Storage_Array(S(I));
@@ -273,7 +294,8 @@ package body NORX is
       Tag_Index : Storage_Offset := Tag'First;
    begin
       S(15) := S(15) xor v;
-      F(S, l * 2);
+      F_l(S);
+      F_l(S);
       for I in 0 .. Tag_Words-1 loop
          Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
          Tag_Index := Tag_Index + Bytes;
@@ -286,8 +308,8 @@ begin
    u := ( 0,  1,  2,  3,
           4,  5,  6,  7,
           8,  9, 10, 11,
-         12, 13, 14, 15);
+          12, 13, 14, 15);
 
-   F(u, 2);
+   F_2(u);
 
 end NORX;
