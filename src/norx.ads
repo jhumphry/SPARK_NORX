@@ -38,7 +38,7 @@ package NORX is
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for regular use.
-   type State is private;
+   type State(<>) is private;
 
 private
 
@@ -67,6 +67,8 @@ private
    pragma Warnings (GNATprove, On, "Compile_Time_Error");
 
    type State is array (Integer range 0..15) of Word;
+
+   function Make_State return State is (State'(others => 0));
 
    -- These functions are not part of the public API, but a child package
    -- NORX.Access_Internals can be used to expose them, in order to verify

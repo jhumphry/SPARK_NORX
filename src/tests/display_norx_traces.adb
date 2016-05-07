@@ -22,7 +22,7 @@ procedure Display_NORX_Traces is
 
    Init_Constants : constant State := Get_Initialisation_Constants;
 
-   State_Trace : State;
+   State_Trace : State := Make_State;
 
    K : NORX_Package.Key_Type;
    N : NORX_Package.Nonce_Type;

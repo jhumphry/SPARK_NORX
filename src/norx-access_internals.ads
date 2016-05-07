@@ -10,6 +10,8 @@ package NORX.Access_Internals is
 
    subtype State is NORX.State;
 
+   function Make_State return State;
+
    function Get_Initialisation_Constants return State;
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
@@ -31,6 +33,8 @@ package NORX.Access_Internals is
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
 private
+
+   function Make_State return State renames NORX.Make_State;
 
    function Get_Initialisation_Constants return State
      renames NORX.Get_Initialisation_Constants;
