@@ -187,12 +187,14 @@ is
    end Absorb_Block;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
-      Number_Full_Blocks : constant Natural := X'Length / Rate_Bytes;
+      Number_Full_Blocks : constant Storage_Offset
+        := X'Length / Storage_Offset(Rate_Bytes);
       X_Index : Storage_Offset := X'First;
    begin
       if X'Length > 0 then
 
          for I in 1..Number_Full_Blocks loop
+            pragma Loop_Invariant (X_Index = X'First + (I-1) * Storage_Offset(Rate_Bytes));
             Absorb_Block(S,
                          X(X_Index .. X_Index + Storage_Offset(Rate_Bytes)-1),
                          v);

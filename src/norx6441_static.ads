@@ -94,7 +94,9 @@ private
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
-   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word)
+     with Pre=> (X'Length < Storage_Offset'Last and
+                   X'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    procedure Encrypt (S : in out State;
                       M : in Storage_Array;
