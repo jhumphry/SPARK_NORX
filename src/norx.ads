@@ -70,7 +70,7 @@ private
    -- Low-level API for NORX. These routines can be accessed by instantiating
    -- the NORX.Access_Internals child package
 
-   function Make_State return State is (State'(others => 0));
+   function Make_State return State;
 
    function Get_Initialisation_Constants return State;
 

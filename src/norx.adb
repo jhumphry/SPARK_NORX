@@ -128,6 +128,8 @@ package body NORX is
    -- specification
    -- ***
 
+   function Make_State return State is (State'(others => 0));
+
    function Get_Initialisation_Constants return State is (u);
 
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
