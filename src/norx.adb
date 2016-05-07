@@ -24,7 +24,6 @@ package body NORX is
       Tag       => 16#04#,
       Branching => 16#10#,
       Merging   => 16#20#);
-   pragma Unreferenced (Domain_Separation);
 
    u : State; -- The initialisation constants
 
@@ -124,6 +123,20 @@ package body NORX is
       Result(Storage_Offset(Rate_Bytes)) := 16#80#;
       return Result;
    end Pad_r;
+
+   function Compare_Tags (L, R : Tag_Type) return Boolean is
+      -- This function compares two tags and returns a Boolean to indicate
+      -- if they are equal. It aims to perform the comparison in constant
+      -- time regardless of the inputs, as required by section 2.5 of the
+      -- specification
+
+      Result : Storage_Element := 0;
+   begin
+      for I in L'Range loop
+         Result := Result or (L(I) xor (R(I)));
+      end loop;
+      return (Result = 0);
+   end Compare_Tags;
 
    procedure Absorb_Block (S : in out State;
                            X : in Storage_Array;
@@ -301,6 +314,48 @@ package body NORX is
          Tag_Index := Tag_Index + Bytes;
       end loop;
    end Finalise;
+
+
+   procedure AEADEnc(K : in Key_Type;
+                     N : in Nonce_Type;
+                     A : in Storage_Array;
+                     M : in Storage_Array;
+                     Z : in Storage_Array;
+                     C : out Storage_Array;
+                     T : out Tag_Type) is
+      S : State := Initialise(K, N);
+   begin
+      Absorb(S, A, Domain_Separation(Header));
+      Encrypt(S, M, C, Domain_Separation(Payload));
+      Absorb(S, Z, Domain_Separation(Trailer));
+      Finalise(S, T, Domain_Separation(Tag));
+   end AEADEnc;
+
+   procedure AEADDec(K : in Key_Type;
+                     N : in Nonce_Type;
+                     A : in Storage_Array;
+                     C : in Storage_Array;
+                     Z : in Storage_Array;
+                     T : in Tag_Type;
+                     M : out Storage_Array;
+                     Valid : out Boolean) is
+      S : State := Initialise(K, N);
+      T2 : Tag_Type;
+   begin
+      Absorb(S, A, Domain_Separation(Header));
+      Decrypt(S, C, M, Domain_Separation(Payload));
+      Absorb(S, Z, Domain_Separation(Trailer));
+      Finalise(S, T2, Domain_Separation(Tag));
+      if Compare_Tags(T, T2) then
+         Valid := True;
+      else
+         -- Section 2.5 of the specification requires that the decrypted data
+         -- not be returned to the caller if verification fails, to try to
+         -- prevent callers from forgetting to check the validity of the result.
+         M := (others => 0);
+         Valid := False;
+      end if;
+   end AEADDec;
 
 begin
 

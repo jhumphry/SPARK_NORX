@@ -36,6 +36,25 @@ package NORX is
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
    subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
 
+   procedure AEADEnc(K : in Key_Type;
+                     N : in Nonce_Type;
+                     A : in Storage_Array;
+                     M : in Storage_Array;
+                     Z : in Storage_Array;
+                     C : out Storage_Array;
+                     T : out Tag_Type)
+     with Pre => (C'Length = M'Length);
+
+   procedure AEADDec(K : in Key_Type;
+                     N : in Nonce_Type;
+                     A : in Storage_Array;
+                     C : in Storage_Array;
+                     Z : in Storage_Array;
+                     T : in Tag_Type;
+                     M : out Storage_Array;
+                     Valid : out Boolean)
+     with Pre => (M'Length = C'Length);
+
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for regular use.
    type State(<>) is private;
