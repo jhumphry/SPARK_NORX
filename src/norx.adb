@@ -98,13 +98,14 @@ package body NORX is
    -- ***
 
    function Pad_r (X : in Storage_Array) return Rate_Storage_Array
-     with Inline, Pre=> (X'Length < Rate_Bytes) is
+     with Inline, Pre=> (X'Length < Rate_Bytes and
+                           X'Last < Storage_Offset'Last - Storage_Offset(Rate_Bytes)) is
       Result : Rate_Storage_Array;
+      Padding : constant Storage_Array(1 .. Storage_Offset(Rate_Bytes - X'Length - 1))
+        := (others => 0);
    begin
-      Result(1..X'Length) := X;
-      Result(X'Length + 1) := 16#01#;
-      Result(X'Length + 2 .. Storage_Offset(Rate_Bytes) - 1) := (others => 0);
-      Result(Storage_Offset(Rate_Bytes)) := 16#80#;
+      Result := X & 16#01# & Padding;
+      Result(Result'Last) := 16#80#;
       return Result;
    end Pad_r;
 
