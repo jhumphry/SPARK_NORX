@@ -29,11 +29,20 @@ package body NORX.Utils is
    end Put_State;
 
    procedure Put_Storage_Array(X : in Storage_Array) is
+
+      function To_Hex_String(X : Storage_Element) return String is
+         Hex : constant String(1..16) := "0123456789ABCDEF";
+         begin
+            return Hex(Integer(X/16) + 1) & Hex(Integer(X mod 16) + 1);
+         end To_Hex_String;
+
    begin
       for I in X'Range loop
-         Put(X(I), Base => 16, Width => 7);
+         Put(To_Hex_String(X(I)));
          if I mod 16 = 15 then
             New_Line;
+         else
+            Put(" ");
          end if;
       end loop;
    end Put_Storage_Array;
