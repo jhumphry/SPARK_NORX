@@ -11,6 +11,8 @@ with Interfaces;
 with NORX;
 with NORX_Load_Store;
 
+pragma Elaborate_All(NORX);
+
 use all type Interfaces.Unsigned_64;
 
 package NORX6461 is new NORX(w                     => 64,

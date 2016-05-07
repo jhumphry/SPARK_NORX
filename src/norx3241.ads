@@ -11,6 +11,8 @@ with Interfaces;
 with NORX;
 with NORX_Load_Store;
 
+pragma Elaborate_All(NORX);
+
 use all type Interfaces.Unsigned_32;
 
 package NORX3241 is new NORX(w                     => 32,
