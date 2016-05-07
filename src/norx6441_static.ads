@@ -65,7 +65,11 @@ with SPARK_Mode => On
                      Z : in Storage_Array;
                      C : out Storage_Array;
                      T : out Tag_Type)
-     with Pre => (C'Length = M'Length);
+     with Pre => (C'Length = M'Length and
+                    A'Length < Storage_Offset'Last and
+                      A'Last < Storage_Offset'Last - Storage_Offset(r/8) and
+                      Z'Length < Storage_Offset'Last and
+                        Z'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    procedure AEADDec(K : in Key_Type;
                      N : in Nonce_Type;
@@ -75,7 +79,11 @@ with SPARK_Mode => On
                      T : in Tag_Type;
                      M : out Storage_Array;
                      Valid : out Boolean)
-     with Pre => (M'Length = C'Length);
+     with Pre => (M'Length = C'Length and
+                    A'Length < Storage_Offset'Last and
+                      A'Last < Storage_Offset'Last - Storage_Offset(r/8) and
+                      Z'Length < Storage_Offset'Last and
+                        Z'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
