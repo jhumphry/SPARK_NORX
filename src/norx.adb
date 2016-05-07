@@ -29,6 +29,8 @@ package body NORX is
       Branching => 16#10#,
       Merging   => 16#20#);
 
+   subtype Rate_Storage_Array is Storage_Array(1..Storage_Offset(Rate_Bytes));
+
    u : State; -- The initialisation constants
 
    -- ***
@@ -95,9 +97,9 @@ package body NORX is
    -- Internal use routines
    -- ***
 
-   function Pad_r (X : in Storage_Array) return Storage_Array
+   function Pad_r (X : in Storage_Array) return Rate_Storage_Array
      with Inline, Pre=> (X'Length < Rate_Bytes) is
-      Result : Storage_Array(1..Storage_Offset(Rate_Bytes));
+      Result : Rate_Storage_Array;
    begin
       Result(1..X'Length) := X;
       Result(X'Length + 1) := 16#01#;
