@@ -6,7 +6,9 @@
 
 package body NORX is
 
-   -- Constants used internally
+   -- ***
+   -- Constants and types used internally
+   -- ***
 
    p : constant Positive := 1; -- This implementation only supports parallelism
                                --  of degree 1 i.e. only serial NORX
@@ -27,13 +29,14 @@ package body NORX is
 
    u : State; -- The initialisation constants
 
-   function Get_Initialisation_Constants return State is (u);
+   -- ***
+   -- Implementation of the the permutation F^{l} as described in Figure 2.4
+   -- of the NORX specification
+   -- ***
 
-   -- Quarter-round
    procedure G (a, b, c, d : in out Word)
      with Inline is
 
-      -- The nonlinear primitive
       function H (x, y : in Word) return Word is
          ((x xor y) xor (Shift_Left((x and y), 1))) with Inline;
 
@@ -86,6 +89,42 @@ package body NORX is
       end loop;
    end F_2;
 
+   -- ***
+   -- Internal use routines
+   -- ***
+
+   function Pad_r (X : in Storage_Array) return Storage_Array
+     with Inline, Pre=> (X'Length < Rate_Bytes) is
+      Result : Storage_Array(1..Storage_Offset(Rate_Bytes));
+   begin
+      Result(1..X'Length) := X;
+      Result(X'Length + 1) := 16#01#;
+      Result(X'Length + 2 .. Storage_Offset(Rate_Bytes) - 1) := (others => 0);
+      Result(Storage_Offset(Rate_Bytes)) := 16#80#;
+      return Result;
+   end Pad_r;
+
+   function Compare_Tags (L, R : Tag_Type) return Boolean is
+      -- This function compares two tags and returns a Boolean to indicate
+      -- if they are equal. It aims to perform the comparison in constant
+      -- time regardless of the inputs, as required by section 2.5 of the
+      -- specification
+
+      Result : Storage_Element := 0;
+   begin
+      for I in L'Range loop
+         Result := Result or (L(I) xor (R(I)));
+      end loop;
+      return (Result = 0);
+   end Compare_Tags;
+
+   -- ***
+   -- Low-level API (mainly) as described in Figure 2.6 of the NORX
+   -- specification
+   -- ***
+
+   function Get_Initialisation_Constants return State is (u);
+
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
                         return State is
 
@@ -113,30 +152,6 @@ package body NORX is
       return S;
    end Initialise;
 
-   function Pad_r (X : in Storage_Array) return Storage_Array
-     with Inline, Pre=> (X'Length < Rate_Bytes) is
-      Result : Storage_Array(1..Storage_Offset(Rate_Bytes));
-   begin
-      Result(1..X'Length) := X;
-      Result(X'Length + 1) := 16#01#;
-      Result(X'Length + 2 .. Storage_Offset(Rate_Bytes) - 1) := (others => 0);
-      Result(Storage_Offset(Rate_Bytes)) := 16#80#;
-      return Result;
-   end Pad_r;
-
-   function Compare_Tags (L, R : Tag_Type) return Boolean is
-      -- This function compares two tags and returns a Boolean to indicate
-      -- if they are equal. It aims to perform the comparison in constant
-      -- time regardless of the inputs, as required by section 2.5 of the
-      -- specification
-
-      Result : Storage_Element := 0;
-   begin
-      for I in L'Range loop
-         Result := Result or (L(I) xor (R(I)));
-      end loop;
-      return (Result = 0);
-   end Compare_Tags;
 
    procedure Absorb_Block (S : in out State;
                            X : in Storage_Array;
@@ -315,6 +330,9 @@ package body NORX is
       end loop;
    end Finalise;
 
+   -- ***
+   -- High-level API as described in Figure 2.5 of the NORX specification
+   -- ***
 
    procedure AEADEnc(K : in Key_Type;
                      N : in Nonce_Type;

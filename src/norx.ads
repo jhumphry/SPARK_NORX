@@ -36,6 +36,8 @@ package NORX is
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(w/4)-1);
    subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
 
+   -- High-level API for NORX
+
    procedure AEADEnc(K : in Key_Type;
                      N : in Nonce_Type;
                      A : in Storage_Array;
@@ -56,10 +58,37 @@ package NORX is
      with Pre => (M'Length = C'Length);
 
    -- This type declaration makes the NORX.Access_Internals package easier to
-   -- write. It is not intended for regular use.
+   -- write. It is not intended for normal use.
    type State(<>) is private;
 
 private
+
+   type State is array (Integer range 0..15) of Word;
+
+   -- Low-level API for NORX. These routines can be accessed by instantiating
+   -- the NORX.Access_Internals child package
+
+   function Make_State return State is (State'(others => 0));
+
+   function Get_Initialisation_Constants return State;
+
+   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
+
+   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
+
+   procedure Encrypt (S : in out State;
+                      M : in Storage_Array;
+                      C : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
+   procedure Decrypt (S : in out State;
+                      C : in Storage_Array;
+                      M : out Storage_Array;
+                      v : in Word)
+     with Pre => (C'Length = M'Length);
+
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
    -- These compile-time checks test requirements that cannot be expressed
    -- in the generic formal parameters. Currently compile-time checks are
@@ -84,32 +113,5 @@ private
                               "This implementation of NORX cannot work " &
                                 "with Storage_Element'Size /= 8");
    pragma Warnings (GNATprove, On, "Compile_Time_Error");
-
-   type State is array (Integer range 0..15) of Word;
-
-   function Make_State return State is (State'(others => 0));
-
-   -- These functions are not part of the public API, but a child package
-   -- NORX.Access_Internals can be used to expose them, in order to verify
-   -- the traces for test vectors.
-   function Get_Initialisation_Constants return State;
-
-   function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
-
-   procedure Absorb (S : in out State; X : in Storage_Array; v : in Word);
-
-   procedure Encrypt (S : in out State;
-                      M : in Storage_Array;
-                      C : out Storage_Array;
-                      v : in Word)
-     with Pre => (C'Length = M'Length);
-
-   procedure Decrypt (S : in out State;
-                      C : in Storage_Array;
-                      M : out Storage_Array;
-                      v : in Word)
-     with Pre => (C'Length = M'Length);
-
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
 end NORX;
