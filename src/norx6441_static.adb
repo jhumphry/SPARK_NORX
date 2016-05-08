@@ -210,7 +210,10 @@ is
                             M : in Rate_Storage_Array;
                             C : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes_I) is
+     with Inline, Pre => (M'Length = C'Length and
+                            M'Length = Rate_Bytes_I and
+                              M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
+                                C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin
@@ -261,7 +264,10 @@ is
                             C : in Rate_Storage_Array;
                             M : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
+     with Inline, Pre => (M'Length = C'Length and
+                            M'Length = Rate_Bytes_I and
+                              M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
+                                C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
       C_i : Word;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
@@ -282,7 +288,7 @@ is
                                  C : in Storage_Array;
                                  M : out Storage_Array;
                                  v : in Word)
-     with Inline, Pre => (M'Length = C'Length) is
+     with Inline, Pre => (M'Length = C'Length and C'Length < Rate_Bytes_I) is
 
       Last_Block : Storage_Array(1..Rate_Bytes_SO);
       C_i : Word;
