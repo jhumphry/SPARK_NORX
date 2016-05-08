@@ -172,6 +172,7 @@ package body NORX is
       S(15) := S(15) xor v;
       F_l(S);
       for I in 0..Rate_Words - 1 loop
+         pragma Loop_Invariant (X_Index = X'First + Storage_Offset(I) * Bytes);
          S(I) := S(I) xor
            Storage_Array_To_Word(X(X_Index .. X_Index + Bytes - 1));
          X_Index := X_Index + Bytes;
@@ -212,6 +213,8 @@ package body NORX is
       S(15) := S(15) xor v;
       F_l(S);
       for I in 0..Rate_Words - 1 loop
+         pragma Loop_Invariant(M_Index = M'First + Storage_Offset(I) * Bytes);
+         pragma Loop_Invariant(C_Index = C'First + Storage_Offset(I) * Bytes);
          S(I) := S(I) xor
            Storage_Array_To_Word(M(M_Index .. M_Index + Bytes - 1));
          C(C_Index .. C_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
@@ -230,6 +233,8 @@ package body NORX is
    begin
       if M'Length > 0 then
          for I in 1..Number_Full_Blocks loop
+            pragma Loop_Invariant(M_Index = M'First + (I-1) * Rate_Bytes_SO);
+            pragma Loop_Invariant(C_Index = C'First + (I-1) * Rate_Bytes_SO);
             Encrypt_Block(S => S,
                           M => M(M_Index..M_Index+Rate_Bytes_SO-1),
                           C => C(C_Index..C_Index+Rate_Bytes_SO-1),
@@ -267,6 +272,8 @@ package body NORX is
       S(15) := S(15) xor v;
       F_l(S);
       for I in 0..Rate_Words - 1 loop
+         pragma Loop_Invariant(M_Index = M'First + Storage_Offset(I) * Bytes);
+         pragma Loop_Invariant(C_Index = C'First + Storage_Offset(I) * Bytes);
          C_i := Storage_Array_To_Word(C(C_Index .. C_Index + Bytes - 1));
          M(M_Index .. M_Index + Bytes - 1) := Word_To_Storage_Array(S(I) xor C_i);
          S(I) := C_i;
@@ -290,6 +297,7 @@ package body NORX is
       F_l(S);
 
       for I in 0..Rate_Words-1 loop
+         pragma Loop_Invariant (Index = Last_Block'First + Storage_Offset(I) * Bytes);
          Last_Block(Index .. Index + Bytes-1) := Word_To_Storage_Array(S(I));
          Index := Index + Bytes;
       end loop;
@@ -300,6 +308,7 @@ package body NORX is
 
       Index := Last_Block'First;
       for I in 0..Rate_Words - 1 loop
+         pragma Loop_Invariant (Index = Last_Block'First + Storage_Offset(I) * Bytes);
          C_i := Storage_Array_To_Word(Last_Block(Index .. Index + Bytes - 1));
          Last_Block(Index .. Index + Bytes - 1)
                     := Word_To_Storage_Array(S(I) xor C_i);
@@ -320,6 +329,8 @@ package body NORX is
    begin
       if M'Length > 0 then
          for I in 1..Number_Full_Blocks loop
+            pragma Loop_Invariant(M_Index = M'First + (I-1) * Rate_Bytes_SO);
+            pragma Loop_Invariant(C_Index = C'First + (I-1) * Rate_Bytes_SO);
             Decrypt_Block(S => S,
                           C => C(C_Index..C_Index+Rate_Bytes_SO-1),
                           M => M(M_Index..M_Index+Rate_Bytes_SO-1),
@@ -344,11 +355,13 @@ package body NORX is
       F_l(S);
       if Tag_Words <= Rate_Words then
          for I in 0 .. Tag_Words-1 loop
+            pragma Loop_Invariant (Tag_Index = Tag'First + Storage_Offset(I) * Bytes);
             Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
             Tag_Index := Tag_Index + Bytes;
          end loop;
       else
          for I in 0 .. Rate_Words-1 loop
+            pragma Loop_Invariant (Tag_Index = Tag'First + Storage_Offset(I) * Bytes);
             Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
             Tag_Index := Tag_Index + Bytes;
          end loop;
