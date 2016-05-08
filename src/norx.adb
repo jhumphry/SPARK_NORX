@@ -14,7 +14,8 @@ package body NORX is
                                --  of degree 1 i.e. only serial NORX
 
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
-   Rate_Bytes : constant Integer := (r / 8);
+   Rate_Bytes_I : constant Integer := (r / 8);
+   Rate_Bytes_SO : constant Storage_Offset := Storage_Offset(r / 8);
    Rate_Words : constant Integer := r / w;
    Key_Words : constant Integer := k / w;
    Tag_Words : constant Integer := t / w;
@@ -29,7 +30,7 @@ package body NORX is
       Branching => 16#10#,
       Merging   => 16#20#);
 
-   subtype Rate_Storage_Array is Storage_Array(1..Storage_Offset(Rate_Bytes));
+   subtype Rate_Storage_Array is Storage_Array(1..Rate_Bytes_SO);
 
    u : State; -- The initialisation constants
 
@@ -98,10 +99,10 @@ package body NORX is
    -- ***
 
    function Pad_r (X : in Storage_Array) return Rate_Storage_Array
-     with Inline, Pre=> (X'Length < Rate_Bytes and
-                           X'Last < Storage_Offset'Last - Storage_Offset(Rate_Bytes)) is
+     with Inline, Pre=> (X'Length < Rate_Bytes_I and
+                           X'Last < Storage_Offset'Last - Rate_Bytes_SO) is
       Result : Rate_Storage_Array;
-      Padding : constant Storage_Array(1 .. Storage_Offset(Rate_Bytes - X'Length - 1))
+      Padding : constant Storage_Array(1 .. Rate_Bytes_SO - Storage_Offset(X'Length + 1))
         := (others => 0);
    begin
       Result := X & 16#01# & Padding;
@@ -165,7 +166,7 @@ package body NORX is
    procedure Absorb_Block (S : in out State;
                            X : in Rate_Storage_Array;
                            v : in Word)
-     with Inline, Pre => (X'Length = Rate_Bytes) is
+     with Inline, Pre => (X'Length = Rate_Bytes_I) is
       X_Index : Storage_Offset := X'First;
    begin
       S(15) := S(15) xor v;
@@ -179,17 +180,17 @@ package body NORX is
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
       Number_Full_Blocks : constant Storage_Offset
-        := X'Length / Storage_Offset(Rate_Bytes);
+        := X'Length / Rate_Bytes_SO;
       X_Index : Storage_Offset := X'First;
    begin
       if X'Length > 0 then
 
          for I in 1..Number_Full_Blocks loop
-            pragma Loop_Invariant (X_Index = X'First + (I-1) * Storage_Offset(Rate_Bytes));
+            pragma Loop_Invariant (X_Index = X'First + (I-1) * Rate_Bytes_SO);
             Absorb_Block(S,
-                         X(X_Index .. X_Index + Storage_Offset(Rate_Bytes)-1),
+                         X(X_Index .. X_Index + Rate_Bytes_SO-1),
                          v);
-            X_Index := X_Index + Storage_Offset(Rate_Bytes);
+            X_Index := X_Index + Rate_Bytes_SO;
          end loop;
 
          Absorb_Block(S, Pad_r(X(X_Index..X'Last)), v);
@@ -201,7 +202,7 @@ package body NORX is
                             M : in Rate_Storage_Array;
                             C : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
+     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes_I) is
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin
@@ -220,23 +221,23 @@ package body NORX is
                       M : in Storage_Array;
                       C : out Storage_Array;
                       v : in Word) is
-      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes;
+      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes_I;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin
       if M'Length > 0 then
          for I in 1..Number_Full_Blocks loop
             Encrypt_Block(S => S,
-                          M => M(M_Index..M_Index+Storage_Offset(Rate_Bytes)-1),
-                          C => C(C_Index..C_Index+Storage_Offset(Rate_Bytes)-1),
+                          M => M(M_Index..M_Index+Rate_Bytes_SO-1),
+                          C => C(C_Index..C_Index+Rate_Bytes_SO-1),
                           v => v);
-            M_Index := M_Index + Storage_Offset(Rate_Bytes);
-            C_Index := C_Index + Storage_Offset(Rate_Bytes);
+            M_Index := M_Index + Rate_Bytes_SO;
+            C_Index := C_Index + Rate_Bytes_SO;
          end loop;
 
          declare
             Last_M: constant Storage_Array := Pad_r(M(M_Index..M'Last));
-            Last_C : Storage_Array(1..Storage_Offset(Rate_Bytes));
+            Last_C : Storage_Array(1..Rate_Bytes_SO);
          begin
             Encrypt_Block(S => S,
                           M => Last_M,
@@ -252,7 +253,7 @@ package body NORX is
                             C : in Rate_Storage_Array;
                             M : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
+     with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes_I) is
       C_i : Word;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
@@ -275,7 +276,7 @@ package body NORX is
                                  v : in Word)
      with Inline, Pre => (M'Length = C'Length) is
 
-      Last_Block : Storage_Array(1..Storage_Offset(Rate_Bytes));
+      Last_Block : Storage_Array(1..Rate_Bytes_SO);
       C_i : Word;
       Index : Storage_Offset := Last_Block'First;
    begin
@@ -307,18 +308,18 @@ package body NORX is
                       C : in Storage_Array;
                       M : out Storage_Array;
                       v : in Word) is
-      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes;
+      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes_I;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin
       if M'Length > 0 then
          for I in 1..Number_Full_Blocks loop
             Decrypt_Block(S => S,
-                          C => C(C_Index..C_Index+Storage_Offset(Rate_Bytes)-1),
-                          M => M(M_Index..M_Index+Storage_Offset(Rate_Bytes)-1),
+                          C => C(C_Index..C_Index+Rate_Bytes_SO-1),
+                          M => M(M_Index..M_Index+Rate_Bytes_SO-1),
                           v => v);
-            M_Index := M_Index + Storage_Offset(Rate_Bytes);
-            C_Index := C_Index + Storage_Offset(Rate_Bytes);
+            M_Index := M_Index + Rate_Bytes_SO;
+            C_Index := C_Index + Rate_Bytes_SO;
          end loop;
 
          Decrypt_Last_Block(S => S,
