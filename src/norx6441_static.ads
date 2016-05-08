@@ -66,10 +66,10 @@ with SPARK_Mode => On
                      C : out Storage_Array;
                      T : out Tag_Type)
      with Pre => (C'Length = M'Length and
-                    A'Length < Storage_Offset'Last and
-                      A'Last < Storage_Offset'Last - Storage_Offset(r/8) and
-                      Z'Length < Storage_Offset'Last and
-                        Z'Last < Storage_Offset'Last - Storage_Offset(r/8));
+                    Valid_Storage_Array_Parameter(A) and
+                      Valid_Storage_Array_Parameter(M) and
+                      Valid_Storage_Array_Parameter(Z) and
+                      Valid_Storage_Array_Parameter(C));
 
    procedure AEADDec(K : in Key_Type;
                      N : in Nonce_Type;
@@ -80,16 +80,24 @@ with SPARK_Mode => On
                      M : out Storage_Array;
                      Valid : out Boolean)
      with Pre => (M'Length = C'Length and
-                    A'Length < Storage_Offset'Last and
-                      A'Last < Storage_Offset'Last - Storage_Offset(r/8) and
-                      Z'Length < Storage_Offset'Last and
-                        Z'Last < Storage_Offset'Last - Storage_Offset(r/8));
+                    Valid_Storage_Array_Parameter(A) and
+                      Valid_Storage_Array_Parameter(C) and
+                      Valid_Storage_Array_Parameter(Z) and
+                      Valid_Storage_Array_Parameter(M));
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
    type State(<>) is private;
 
+   -- This is only used to simplify the preconditions
+   function Valid_Storage_Array_Parameter(X : in Storage_Array) return Boolean;
+
 private
+
+   function Valid_Storage_Array_Parameter(X : in Storage_Array) return Boolean
+   is
+      (X'Length < Storage_Offset'Last and
+         X'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    type State is array (Integer range 0..15) of Word;
 
