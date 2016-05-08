@@ -48,10 +48,10 @@ package NORX is
                      C : out Storage_Array;
                      T : out Tag_Type)
      with Pre => (C'Length = M'Length and
-                    Valid_Storage_Array_Parameter(A) and
-                      Valid_Storage_Array_Parameter(M) and
-                      Valid_Storage_Array_Parameter(Z) and
-                      Valid_Storage_Array_Parameter(C));
+                    Valid_Storage_Array_Parameter(A'Length, A'Last) and
+                      Valid_Storage_Array_Parameter(M'Length, M'Last) and
+                      Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
+                      Valid_Storage_Array_Parameter(C'Length, C'Last));
 
    procedure AEADDec(K : in Key_Type;
                      N : in Nonce_Type;
@@ -62,24 +62,27 @@ package NORX is
                      M : out Storage_Array;
                      Valid : out Boolean)
      with Pre => (M'Length = C'Length and
-                    Valid_Storage_Array_Parameter(A) and
-                      Valid_Storage_Array_Parameter(C) and
-                      Valid_Storage_Array_Parameter(Z) and
-                      Valid_Storage_Array_Parameter(M));
+                    Valid_Storage_Array_Parameter(A'Length, A'Last) and
+                      Valid_Storage_Array_Parameter(C'Length, C'Last) and
+                      Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
+                      Valid_Storage_Array_Parameter(M'Length, M'Last));
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
    type State(<>) is private;
 
    -- This is only used to simplify the preconditions
-   function Valid_Storage_Array_Parameter(X : in Storage_Array) return Boolean;
+   function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
+                                          Last : in Storage_Offset)
+                                          return Boolean;
 
 private
 
-   function Valid_Storage_Array_Parameter(X : in Storage_Array) return Boolean
-   is
-      (X'Length < Storage_Offset'Last and
-         X'Last < Storage_Offset'Last - Storage_Offset(r/8));
+   function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
+                                          Last : in Storage_Offset)
+                                          return Boolean is
+      (Length < Storage_Offset'Last and
+         Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    type State is array (Integer range 0..15) of Word;
 
