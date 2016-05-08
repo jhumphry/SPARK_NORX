@@ -386,7 +386,9 @@ is
       Absorb(S, A, Domain_Separation(Header));
       Encrypt(S, M, C, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
+      pragma Warnings (GNATprove, Off, "unused assignment to ""S""");
       Finalise(S, T, Domain_Separation(Tag));
+      pragma Warnings (GNATprove, On, "unused assignment to ""S""");
    end AEADEnc;
 
    procedure AEADDec(K : in Key_Type;
@@ -403,7 +405,9 @@ is
       Absorb(S, A, Domain_Separation(Header));
       Decrypt(S, C, M, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
+      pragma Warnings (GNATprove, Off, "unused assignment to ""S""");
       Finalise(S, T2, Domain_Separation(Tag));
+      pragma Warnings (GNATprove, On, "unused assignment to ""S""");
       if Compare_Tags(T, T2) then
          Valid := True;
       else
