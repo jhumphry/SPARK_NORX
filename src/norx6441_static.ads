@@ -83,7 +83,8 @@ with SPARK_Mode => On
                     Valid_Storage_Array_Parameter(A'Length, A'Last) and
                       Valid_Storage_Array_Parameter(C'Length, C'Last) and
                       Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
-                      Valid_Storage_Array_Parameter(M'Length, M'Last));
+                      Valid_Storage_Array_Parameter(M'Length, M'Last)),
+     Post => (Valid or (for all I in M'Range => M(I) = 0));
 
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
