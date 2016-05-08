@@ -163,7 +163,7 @@ package body NORX is
 
 
    procedure Absorb_Block (S : in out State;
-                           X : in Storage_Array;
+                           X : in Rate_Storage_Array;
                            v : in Word)
      with Inline, Pre => (X'Length = Rate_Bytes) is
       X_Index : Storage_Offset := X'First;
@@ -198,8 +198,8 @@ package body NORX is
    end Absorb;
 
    procedure Encrypt_Block (S : in out State;
-                            M : in Storage_Array;
-                            C : out Storage_Array;
+                            M : in Rate_Storage_Array;
+                            C : out Rate_Storage_Array;
                             v : in Word)
      with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
       M_Index : Storage_Offset := M'First;
@@ -249,8 +249,8 @@ package body NORX is
    end Encrypt;
 
    procedure Decrypt_Block (S : in out State;
-                            C : in Storage_Array;
-                            M : out Storage_Array;
+                            C : in Rate_Storage_Array;
+                            M : out Rate_Storage_Array;
                             v : in Word)
      with Inline, Pre => (M'Length = C'Length and M'Length = Rate_Bytes) is
       C_i : Word;
