@@ -316,7 +316,7 @@ is
                       C : in Storage_Array;
                       M : out Storage_Array;
                       v : in Word) is
-      Number_Full_Blocks : constant Natural := M'Length / Rate_Bytes;
+      Number_Full_Blocks : constant Storage_Offset := C'Length / Rate_Bytes_SO;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin

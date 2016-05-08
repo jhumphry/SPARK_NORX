@@ -100,13 +100,19 @@ private
                       M : in Storage_Array;
                       C : out Storage_Array;
                       v : in Word)
-     with Pre => (C'Length = M'Length);
+     with Pre => (C'Length = M'Length and
+                    M'Length < Storage_Offset'Last and
+                      M'Last < Storage_Offset'Last - Storage_Offset(r/8) and
+                      C'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    procedure Decrypt (S : in out State;
                       C : in Storage_Array;
                       M : out Storage_Array;
                       v : in Word)
-     with Pre => (C'Length = M'Length);
+     with Pre => (C'Length = M'Length and
+                    C'Length < Storage_Offset'Last and
+                      C'Last < Storage_Offset'Last - Storage_Offset(r/8) and
+                      M'Last < Storage_Offset'Last - Storage_Offset(r/8));
 
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
