@@ -26,7 +26,7 @@ package NORX_Load_Store is
    function Unsigned_8_To_Storage_Array (W : in Unsigned_8)
                                          return Storage_Array is
      (Storage_Array_Single'(Storage_Array_Single'First => E(W)))
-   with Inline;
+   with Inline, Post => (Unsigned_8_To_Storage_Array'Result'Length = 1);
 
    function Storage_Array_To_Unsigned_16 (S : in Storage_Array)
                                           return Unsigned_16 is
@@ -38,7 +38,7 @@ package NORX_Load_Store is
                                           return Storage_Array is
      (Storage_Array'(E(W mod 16#100#),
                      E(Shift_Right(W, 8) mod 16#100#)))
-   with Inline;
+   with Inline, Post => (Unsigned_16_To_Storage_Array'Result'Length = 2);
 
    function Storage_Array_To_Unsigned_32 (S : in Storage_Array)
                                           return Unsigned_32 is
@@ -54,7 +54,7 @@ package NORX_Load_Store is
                      E(Shift_Right(W, 8) mod 16#100#),
                      E(Shift_Right(W, 16) mod 16#100#),
                      E(Shift_Right(W, 24) mod 16#100#)))
-   with Inline;
+   with Inline, Post => (Unsigned_32_To_Storage_Array'Result'Length = 4);
 
    function Storage_Array_To_Unsigned_64 (S : in Storage_Array)
                                           return Unsigned_64 is
@@ -78,6 +78,6 @@ package NORX_Load_Store is
                      E(Shift_Right(W, 40) mod 16#100#),
                      E(Shift_Right(W, 48) mod 16#100#),
                      E(Shift_Right(W, 56) mod 16#100#)))
-     with Inline;
+     with Inline, Post => (Unsigned_64_To_Storage_Array'Result'Length = 8);
 
 end NORX_Load_Store;
