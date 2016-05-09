@@ -28,7 +28,7 @@ generic
    with function Shift_Left
      (Value  : Word;
       Amount : Natural) return Word is <>;
-   l : Round_Number; -- Round number 1 ≤ l ≤ 63
+   l : Round_Count; -- Rounds of the permutation 1 ≤ l ≤ 63
    k : Positive; -- Key size
    t : Positive; -- Tag size (t ≤ 4w for NORX32 and NORX64)
    n : Positive; -- Nonce size

@@ -16,7 +16,7 @@ with Pure, SPARK_Mode => On is
    subtype Word_Size is Integer
      with Static_Predicate => Word_Size in 8 | 16 | 32 | 64;
 
-   subtype Round_Number is Integer range 1..63;
+   subtype Round_Count is Integer range 1..63;
 
    type Rotation_Offsets is array (Integer range 0..3) of Natural;
 
