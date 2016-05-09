@@ -139,6 +139,9 @@ private
    pragma Compile_Time_Error (n > 4*w,
                               "The specified nonce size n is greater than " &
                                 "4*w, the word size");
+   pragma Compile_Time_Error (w = 16 and n > 2*w,
+                              "The specified nonce size n is greater than " &
+                                "2*w, the word size and w=16");
    pragma Compile_Time_Error (r + c /= 16 * w,
                               "The total of the rate (r) and capacity (c) do " &
                                 "not equal 16*w, the word size");
