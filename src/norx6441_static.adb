@@ -23,7 +23,6 @@ is
    Rate_Bytes_SO : constant Storage_Offset := Storage_Offset(r / 8);
    Rate_Words : constant Integer := r / w;
    Key_Words : constant Integer := k / w;
-   Tag_Words : constant Integer := t / w;
    Nonce_Words : constant Integer := n / w;
 
    type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
@@ -355,37 +354,28 @@ is
       end if;
    end Decrypt;
 
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word)
-   with SPARK_Mode => Off is
+   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word) is
       Tag_Index : Storage_Offset := Tag'First;
    begin
       S(15) := S(15) xor v;
       F_l(S);
       F_l(S);
 
-      pragma Warnings (Off, "condition is always");
+      Finalise_Iterations:
+      loop
+         pragma Loop_Invariant (Tag_Index <= Tag'Last);
 
-      if Tag_Words <= Rate_Words then
-         for I in 0 .. Tag_Words-1 loop
-            pragma Loop_Invariant (Tag_Index = Tag'First + Storage_Offset(I) * Bytes);
-            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
-            Tag_Index := Tag_Index + Bytes;
-         end loop;
-      else
          for I in 0 .. Rate_Words-1 loop
-            pragma Loop_Invariant (Tag_Index = Tag'First + Storage_Offset(I) * Bytes);
-            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
+            pragma Loop_Invariant (Tag_Index < Storage_Offset'Last - Bytes);
+            Tag(Tag_Index .. Tag_Index + Bytes - 1)
+              := Word_To_Storage_Array(S(I));
             Tag_Index := Tag_Index + Bytes;
+            exit Finalise_Iterations when Tag_Index > Tag'Last;
          end loop;
+
          S(15) := S(15) xor v;
          F_l(S);
-         for I in 0 .. Tag_Words - Rate_Words - 1 loop
-            Tag(Tag_Index .. Tag_Index + Bytes - 1) := Word_To_Storage_Array(S(I));
-            Tag_Index := Tag_Index + Bytes;
-         end loop;
-      end if;
-
-      pragma Warnings (On, "condition is always");
+      end loop Finalise_Iterations;
 
    end Finalise;
 
