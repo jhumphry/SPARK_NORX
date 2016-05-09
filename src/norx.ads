@@ -43,6 +43,10 @@ package NORX is
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(n/8)-1);
    subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
 
+   Null_Storage_Array : constant Storage_Array(1..0) := (others => 0);
+   -- A null Storage_Array that can be passed to AEADEnc and AEADDec if one
+   -- of the header, message or trailer parameters is not required.
+
    -- High-level API for NORX
 
    procedure AEADEnc(K : in Key_Type;

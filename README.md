@@ -24,9 +24,10 @@ out in the NORX specification. This consists of just two procedures, `AEADEnc`
 that `AEADDec`. The former procedure takes in a key `K`, a 'nonce' `N`, an
 optional message header `A` (not encrypted), optional message to be encrypted
 `M` and optional trailer `Z` (not encrypted) and returns the encrypted
-ciphertext `C` and the authentication tag `T`. The latter procedure performs
-the decryption and returns the decoded message and a boolean that indicates
-whether the message was valid.
+cipher-text `C` and the authentication tag `T`. The latter procedure performs
+the decryption and returns the decoded message and a Boolean that indicates
+whether the message was valid. If any of `A`, `M` or `Z` parameters are not
+used, the constant `Null_Storage_Array` can be passed to the routines.
 
 `NORX.Definitions` defines some constrained types used in the generic formal
 parameters and `NORX.Load_Store` contains functions that convert between
