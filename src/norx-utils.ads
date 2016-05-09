@@ -3,7 +3,6 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
-
 generic
 package NORX.Utils is
 

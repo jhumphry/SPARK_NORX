@@ -34,7 +34,7 @@ generic
    n : Positive; -- Nonce size
    rot : Rotation_Offsets;
    r : Positive; -- Rate
-   c : Positive; --Capacity
+   c : Positive; -- Capacity
 package NORX is
 
    use System.Storage_Elements;

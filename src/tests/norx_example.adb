@@ -94,5 +94,4 @@ begin
    end if;
    New_Line;
 
-
 end NORX_Example;

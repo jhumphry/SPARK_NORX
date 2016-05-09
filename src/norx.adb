@@ -162,7 +162,6 @@ package body NORX is
       return S;
    end Initialise;
 
-
    procedure Absorb_Block (S : in out State;
                            X : in Rate_Storage_Array;
                            v : in Word)

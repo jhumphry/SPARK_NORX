@@ -4,7 +4,6 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
-
 generic
 package NORX.Access_Internals is
 
@@ -58,4 +57,4 @@ private
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word)
      renames NORX.Finalise;
 
-end NORX.Access_internals;
+end NORX.Access_Internals;
