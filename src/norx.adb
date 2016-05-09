@@ -120,8 +120,6 @@ package body NORX is
       -- time regardless of the inputs, as required by section 2.5 of the
       -- specification
 
-      pragma Optimize (Off);
-
       Result : Storage_Element := 0;
    begin
       for I in L'Range loop
