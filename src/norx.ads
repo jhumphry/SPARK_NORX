@@ -130,12 +130,12 @@ private
    pragma Compile_Time_Error (k mod w /= 0,
                               "The specified key size k is not a multiple of " &
                                 "w, the word size");
+   pragma Compile_Time_Error (k > 12*w,
+                              "The specified nonce size n is greater than " &
+                                "12*w, the word size");
    pragma Compile_Time_Error (t mod w /= 0,
                               "The specified tag size t is not a multiple of " &
                                 "w, the word size");
-   pragma Compile_Time_Error (t > 2*r,
-                              "The specified tag size t is more than 2*r, " &
-                                "the rate");
    pragma Compile_Time_Error (n mod w /= 0,
                               "The specified nonce size n is not a multiple " &
                                 "of w, the word size");
