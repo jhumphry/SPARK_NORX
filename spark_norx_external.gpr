@@ -1,0 +1,33 @@
+-- NORX
+-- an Ada implementation of the NORX Authenticated Encryption Algorithm
+-- created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves
+
+-- Copyright (c) 2016, James Humphry - see LICENSE file for details
+
+-- This project file will not rebuild the library
+
+library project SPARK_NORX_External is
+
+   for Languages use ("Ada");
+
+   for Library_Name use "spark_norx";
+   for Library_Kind use "static";
+
+   for Library_Interface use   ("NORX",
+                                "NORX_Definitions",
+                                "NORX_Load_Store",
+                                "NORX.Access_Internals",
+                                "NORX.Utils",
+                                "NORX0841",
+                                "NORX1641",
+                                "NORX3241",
+                                "NORX3261",
+                                "NORX6441",
+                                "NORX6461");
+
+   for Source_Dirs use ("src/");
+   for Library_Dir use "lib/";
+
+   for Externally_Built use "true";
+
+end SPARK_NORX_External;
