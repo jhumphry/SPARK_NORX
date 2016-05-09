@@ -381,9 +381,8 @@ package body NORX is
       Absorb(S, A, Domain_Separation(Header));
       Encrypt(S, M, C, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
-      pragma Warnings (GNATprove, Off, "unused assignment to ""S""");
       Finalise(S, T, Domain_Separation(Tag));
-      pragma Warnings (GNATprove, On, "unused assignment to ""S""");
+      pragma Unreferenced (S);
    end AEADEnc;
 
    procedure AEADDec(K : in Key_Type;
@@ -400,9 +399,8 @@ package body NORX is
       Absorb(S, A, Domain_Separation(Header));
       Decrypt(S, C, M, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
-      pragma Warnings (GNATprove, Off, "unused assignment to ""S""");
       Finalise(S, T2, Domain_Separation(Tag));
-      pragma Warnings (GNATprove, On, "unused assignment to ""S""");
+      pragma Unreferenced (S);
       if Compare_Tags(T, T2) then
          Valid := True;
       else
