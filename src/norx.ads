@@ -97,26 +97,23 @@ private
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word)
-     with Pre=> (X'Length < Storage_Offset'Last and
-                   X'Last < Storage_Offset'Last - Storage_Offset(r/8));
+     with Pre=> (Valid_Storage_Array_Parameter(X'Length, X'Last));
 
    procedure Encrypt (S : in out State;
                       M : in Storage_Array;
                       C : out Storage_Array;
                       v : in Word)
      with Pre => (C'Length = M'Length and
-                    M'Length < Storage_Offset'Last and
-                      M'Last < Storage_Offset'Last - Storage_Offset(r/8) and
-                      C'Last < Storage_Offset'Last - Storage_Offset(r/8));
+                    Valid_Storage_Array_Parameter(M'Length, M'Last) and
+                      Valid_Storage_Array_Parameter(C'Length, C'Last));
 
    procedure Decrypt (S : in out State;
                       C : in Storage_Array;
                       M : out Storage_Array;
                       v : in Word)
      with Pre => (C'Length = M'Length and
-                    C'Length < Storage_Offset'Last and
-                      C'Last < Storage_Offset'Last - Storage_Offset(r/8) and
-                      M'Last < Storage_Offset'Last - Storage_Offset(r/8));
+                    Valid_Storage_Array_Parameter(C'Length, C'Last) and
+                      Valid_Storage_Array_Parameter(M'Length, M'Last));
 
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
 
