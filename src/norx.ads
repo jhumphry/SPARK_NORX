@@ -4,6 +4,11 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
+pragma Restrictions(No_Implementation_Attributes,
+                    No_Implementation_Identifiers,
+                    No_Implementation_Units,
+                    No_Obsolescent_Features);
+
 with System.Storage_Elements;
 use type System.Storage_Elements.Storage_Offset;
 

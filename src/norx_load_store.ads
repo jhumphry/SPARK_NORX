@@ -6,6 +6,11 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
+-- Note that all the Unsigned_xx types count as Implementation_Identifiers
+pragma Restrictions(No_Implementation_Attributes,
+                    No_Implementation_Units,
+                    No_Obsolescent_Features);
+
 with System.Storage_Elements;
 use System.Storage_Elements;
 
