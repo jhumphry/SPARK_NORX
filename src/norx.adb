@@ -135,23 +135,17 @@ package body NORX is
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
                         return State is
       S : State := u;
+      Key_Material_Position : constant Natural := (if w = 16 then 2 else 4);
    begin
       for I in 0..Nonce_Words-1 loop
          S(I) :=
            Storage_Array_To_Word(Nonce(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
       end loop;
 
-      if w = 16 then
-         for I in 0..Key_Words-1 loop
-            S(I + 2) :=
-              Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
-         end loop;
-      else
-         for I in 0..Key_Words-1 loop
-            S(I + 4) :=
-              Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
-         end loop;
-      end if;
+      for I in 0..Key_Words-1 loop
+         S(I + Key_Material_Position) :=
+           Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+      end loop;
 
       S(12) := S(12) xor Word(w);
       S(13) := S(13) xor Word(l);
