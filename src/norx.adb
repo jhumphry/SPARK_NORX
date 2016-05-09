@@ -163,7 +163,7 @@ package body NORX is
    procedure Absorb_Block (S : in out State;
                            X : in Rate_Storage_Array;
                            v : in Word)
-     with Inline, Pre => (X'Length = Rate_Bytes_I) is
+     with Inline is
       X_Index : Storage_Offset := X'First;
    begin
       S(15) := S(15) xor v;
@@ -200,10 +200,8 @@ package body NORX is
                             M : in Rate_Storage_Array;
                             C : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and
-                            M'Length = Rate_Bytes_I and
-                              M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
-                                C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
+     with Inline, Pre => (M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
+                            C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
    begin
@@ -258,10 +256,8 @@ package body NORX is
                             C : in Rate_Storage_Array;
                             M : out Rate_Storage_Array;
                             v : in Word)
-     with Inline, Pre => (M'Length = C'Length and
-                            M'Length = Rate_Bytes_I and
-                              M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
-                                C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
+     with Inline, Pre => (M'Last <= Storage_Offset'Last - Rate_Bytes_SO and
+                              C'Last <= Storage_Offset'Last - Rate_Bytes_SO) is
       C_i : Word;
       M_Index : Storage_Offset := M'First;
       C_Index : Storage_Offset := C'First;
