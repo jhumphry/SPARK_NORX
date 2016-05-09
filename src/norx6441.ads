@@ -7,6 +7,8 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
+pragma SPARK_Mode (On);
+
 with Interfaces;
 with NORX;
 with NORX_Load_Store;
