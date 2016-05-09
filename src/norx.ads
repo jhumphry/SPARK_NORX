@@ -40,8 +40,14 @@ package NORX is
    use System.Storage_Elements;
 
    subtype Key_Type is Storage_Array(0..Storage_Offset(k/8)-1);
+   -- A Storage_Array subtype containing key material.
+
    subtype Nonce_Type is Storage_Array(0..Storage_Offset(n/8)-1);
+   -- A Storage_Array subtype containing the nonce material. This must be unique
+   -- per-message.
+
    subtype Tag_Type is Storage_Array(0..Storage_Offset(t/8)-1);
+   -- A Storage_Array subtype containing an authentication tag.
 
    Null_Storage_Array : constant Storage_Array(1..0) := (others => 0);
    -- A null Storage_Array that can be passed to AEADEnc and AEADDec if one
@@ -61,6 +67,14 @@ package NORX is
                       Valid_Storage_Array_Parameter(M'Length, M'Last) and
                       Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
                       Valid_Storage_Array_Parameter(C'Length, C'Last));
+   -- AEADEnc carries out a authenticated encryption
+   -- K : key data
+   -- N : nonce
+   -- A : optional (unencrypted) header
+   -- M : optional message to be encrypted
+   -- Z : optional (unencrypted) trailer
+   -- C : encrypted version of M
+   -- T : authentication tag for (A,M,Z)
 
    procedure AEADDec(K : in Key_Type;
                      N : in Nonce_Type;
@@ -76,15 +90,23 @@ package NORX is
                       Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
                       Valid_Storage_Array_Parameter(M'Length, M'Last)),
      Post => (Valid or (for all I in M'Range => M(I) = 0));
+   -- AEADEnc carries out a authenticated decryption
+   -- K : key data
+   -- N : nonce
+   -- A : optional (unencrypted) header
+   -- C : optional ciphertext to be decrypted
+   -- Z : optional (unencrypted) trailer
+   -- M : contains the decrypted C or zero if the input does not authenticate
+   -- Valid : indicates if the input authenticates correctly
 
+   type State(<>) is private;
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
-   type State(<>) is private;
 
-   -- This is only used to simplify the preconditions
    function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
                                           Last : in Storage_Offset)
                                           return Boolean;
+   -- This is only used to simplify the preconditions
 
 private
 
