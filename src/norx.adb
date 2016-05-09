@@ -9,6 +9,8 @@ pragma Restrictions(No_Implementation_Attributes,
                     No_Implementation_Units,
                     No_Obsolescent_Features);
 
+with NORX.Compare_Tags;
+
 package body NORX is
 
    -- ***
@@ -114,19 +116,7 @@ package body NORX is
       return Result;
    end Pad_r;
 
-   function Compare_Tags (L, R : Tag_Type) return Boolean is
-      -- This function compares two tags and returns a Boolean to indicate
-      -- if they are equal. It aims to perform the comparison in constant
-      -- time regardless of the inputs, as required by section 2.5 of the
-      -- specification
-
-      Result : Storage_Element := 0;
-   begin
-      for I in L'Range loop
-         Result := Result or (L(I) xor (R(I)));
-      end loop;
-      return (Result = 0);
-   end Compare_Tags;
+   function Compare_Tags_Constant_Time is new NORX.Compare_Tags;
 
    -- ***
    -- Low-level API (mainly) as described in Figure 2.6 of the NORX
@@ -401,7 +391,7 @@ package body NORX is
       Absorb(S, Z, Domain_Separation(Trailer));
       Finalise(S, T2, Domain_Separation(Tag));
       pragma Unreferenced (S);
-      if Compare_Tags(T, T2) then
+      if Compare_Tags_Constant_Time(T, T2) then
          Valid := True;
       else
          -- Section 2.5 of the specification requires that the decrypted data

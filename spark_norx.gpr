@@ -15,6 +15,7 @@ library project SPARK_NORX is
    for Library_Kind use "static";
 
    for Library_Interface use   ("NORX",
+                                "NORX.Compare_Tags",
                                 "NORX_Definitions",
                                 "NORX_Load_Store",
                                 "NORX.Access_Internals",
@@ -47,6 +48,9 @@ library project SPARK_NORX is
          when "optimize" | "optimise" =>
             for Default_Switches ("ada") use ("-gnat2012", "-O2",
                                               "-gnatn", "-funroll-loops");
+            for Switches ("norx-compare_tags.adb") use ("-gnat2012", "-O0",
+                                                        "-gnatn",
+                                                        "-funroll-loops");
 
       end case;
    end Compiler;
