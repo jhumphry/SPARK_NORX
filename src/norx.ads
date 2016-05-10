@@ -16,7 +16,7 @@ with NORX_Definitions;
 use NORX_Definitions;
 
 generic
-   w : Word_Size; -- Word size w ∈ { 32, 64 }
+   w : Word_Size; -- Word size w ∈ { 8, 16, 32, 64 } bits
    type Word is mod <>; -- Word'Modulus must equal w**2
    with function Storage_Array_To_Word
      (S : in System.Storage_Elements.Storage_Array) return Word;
@@ -28,13 +28,13 @@ generic
    with function Shift_Left
      (Value  : Word;
       Amount : Natural) return Word is <>;
-   l : Round_Count; -- Rounds of the permutation 1 ≤ l ≤ 63
-   k : Positive; -- Key size
-   t : Positive; -- Tag size (t ≤ 4w for NORX32 and NORX64)
-   n : Positive; -- Nonce size
-   rot : Rotation_Offsets;
-   r : Positive; -- Rate
-   c : Positive; -- Capacity
+   l : Round_Count; -- Rounds of the permutation to perform 1 ≤ l ≤ 63
+   k : Positive; -- Key size in bits
+   t : Positive; -- Tag size in bits (t ≤ 4w for NORX32 and NORX64)
+   n : Positive; -- Nonce size in bits
+   rot : Rotation_Offsets; -- Rotation offsets for permutation function
+   r : Positive; -- Rate in bits
+   c : Positive; -- Capacity in bits
 package NORX is
 
    use System.Storage_Elements;
@@ -67,7 +67,7 @@ package NORX is
                       Valid_Storage_Array_Parameter(M'Length, M'Last) and
                       Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
                       Valid_Storage_Array_Parameter(C'Length, C'Last));
-   -- AEADEnc carries out a authenticated encryption
+   -- AEADEnc carries out an authenticated encryption
    -- K : key data
    -- N : nonce
    -- A : optional (unencrypted) header
@@ -90,12 +90,13 @@ package NORX is
                       Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
                       Valid_Storage_Array_Parameter(M'Length, M'Last)),
      Post => (Valid or (for all I in M'Range => M(I) = 0));
-   -- AEADEnc carries out a authenticated decryption
+   -- AEADEnc carries out an authenticated decryption
    -- K : key data
    -- N : nonce
    -- A : optional (unencrypted) header
    -- C : optional ciphertext to be decrypted
    -- Z : optional (unencrypted) trailer
+   -- T : authentication tag
    -- M : contains the decrypted C or zero if the input does not authenticate
    -- Valid : indicates if the input authenticates correctly
 
@@ -106,7 +107,7 @@ package NORX is
    function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
                                           Last : in Storage_Offset)
                                           return Boolean;
-   -- This is only used to simplify the preconditions
+   -- This function simplifies the preconditions
 
 private
 
