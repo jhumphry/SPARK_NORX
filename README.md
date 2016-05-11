@@ -53,16 +53,17 @@ the NORX designers.
 
 ## Status of SPARK proof
 
-All of the standard instantiations of `NORX` can be proved using SPARK for all
-but one type of check. Currently SPARK cannot prove the full initialisation of
-output arrays where this is done one element at a time in a loop rather than
-in a single array expression. SPARK will therefore report unproved checks of
-the form _'"C" might not be initialised'_ for each procedure with an array
-output. While I believe there are no true errors of this type in the code it
-is not appropriate to remove these proof errors. Simply zeroing the outputs at
-the start of the procedures would enable simple proofs of initialisation, but
-apart from being inefficient this would be hiding any lack of initialisation,
-not fixing it.
+As the code is written in SPARK, all of the standard instantiations of `NORX`
+can be proved free of run-time exceptions for all but one type of check.
+Currently SPARK cannot prove the full initialisation of output arrays where
+this is done one element at a time in a loop rather than in a single array
+expression. SPARK will therefore report unproved checks of the form _'"C"
+might not be initialised'_ for each procedure with an array output. Simply
+zeroing the output arrays at the start of the procedures would resolve these
+unproved checks, but this would be inefficient and would hide any real errors.
+Instead assertions of the form `C_Index = C'Last + 1` are proved at the end of
+the procedures. These show that the whole array has been iterated over by the
+time the procedure exits.
 
 However, SPARK is able to prove the absence of all other potential sources of
 run-time exceptions, and proves that `AEADDec` will not return any decrypted
