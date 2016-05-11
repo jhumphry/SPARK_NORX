@@ -164,6 +164,8 @@ package body NORX is
            Storage_Array_To_Word(X(X_Index .. X_Index + Bytes - 1));
          X_Index := X_Index + Bytes;
       end loop;
+
+      pragma Assert (X_Index = X'Last + 1);
    end Absorb_Block;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word) is
@@ -205,6 +207,9 @@ package body NORX is
          M_Index := M_Index + Bytes;
          C_Index := C_Index + Bytes;
       end loop;
+
+      pragma Assert (M_Index = M'Last + 1);
+      pragma Assert (C_Index = C'Last + 1);
    end Encrypt_Block;
 
    procedure Encrypt (S : in out State;
@@ -262,6 +267,9 @@ package body NORX is
          M_Index := M_Index + Bytes;
          C_Index := C_Index + Bytes;
       end loop;
+
+      pragma Assert (M_Index = M'Last + 1);
+      pragma Assert (C_Index = C'Last + 1);
    end Decrypt_Block;
 
    procedure Decrypt_Last_Block (S : in out State;
@@ -296,6 +304,8 @@ package body NORX is
          S(I) := C_i;
          Index := Index + Bytes;
       end loop;
+
+      pragma Assert (Index = Last_Block'Last + 1);
 
       M := Last_Block(1..C'Length);
    end Decrypt_Last_Block;
