@@ -4,7 +4,7 @@
 
 This is an Ada 2012 / SPARK 2014 project that implements the
 [NORX](https://norx.io/) Authenticated Encryption with Additional Data
-Algorithm , a second round candidate in the
+Algorithm, a second round candidate in the
 [CAESAR](http://competitions.cr.yp.to/caesar.html) competition. NORX was
 designed by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves.
 
@@ -21,7 +21,7 @@ provided with no warranties, as set out in the file `LICENSE`.
 
 The main generic package is `NORX` which implements the high-level API as set
 out in the NORX specification. This consists of just two procedures, `AEADEnc`
-that `AEADDec`. The former procedure takes in a key `K`, a 'nonce' `N`, an
+and `AEADDec`. The former procedure takes in a key `K`, a 'nonce' `N`, an
 optional message header `A` (not encrypted), optional message to be encrypted
 `M` and optional trailer `Z` (not encrypted) and returns the encrypted
 cipher-text `C` and the authentication tag `T`. The latter procedure performs
@@ -67,9 +67,9 @@ time the procedure exits.
 
 However, SPARK is able to prove the absence of all other potential sources of
 run-time exceptions, and proves that `AEADDec` will not return any decrypted
-data if the tag verification failed. The GPL version of SPARK shipped with the
-GNAT GPL 2015 Ada compiler from [AdaCore](http://libre.adacore.com/) was used
-to develop this project.
+data if the tag verification failed. The GPL SPARK prover `gnatprove` shipped
+with the GNAT GPL 2015 Ada compiler from [AdaCore](http://libre.adacore.com/)
+was used to develop this project.
 
 ## Project files and examples
 
@@ -81,10 +81,11 @@ of the library. `spark_norx_examples.gpr` builds the example code.
 
 ## Using GNATprove for verification
 
-To verify the proofs (apart from array initialisation), the following command
-can be used. The parallelism (`-j`) and time limit per proof (`--timeout`) may
-need to be varied depending on the speed of your machine.
+To automatically verify the code (apart from array initialisation as discussed
+above), the GPS IDE can be used. Alternatively the following commands can be
+used at the shell. The parallelism (`-j`) and time limit per proof
+(`--timeout`) may need to be varied depending on the speed of your machine.
 
     gnatprove -P spark_norx.gpr -j 2 --timeout=3 --proof=progressive --warnings=continue
 
-Alternatively, the `GPS` IDE can be used.
+Add `--report=all` if you want to see the checks that are proved as well.
