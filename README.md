@@ -74,8 +74,19 @@ was used to develop this project.
 ## Project files and examples
 
 Three project files for use with `GPRBuild` are provided. `spark_norx.gpr`
-builds the NORX code as a static library. It takes an optional parameter
-`mode` which can be one of `debug` or `optimise` (or its synonym `optimize`).
+builds the NORX code as a static library. It takes two optional parameters:
+
+- `mode` can be set to `debug` (the default) or `optimise`/`optimize`. This
+sets appropriate compiler flags.
+
+- `load_store` can be set to `explicit` (the default) or `le`. This setting
+controls how arrays of bytes are converted into words. The `explicit` setting
+compiles functions that use bit shifts and bit-wise operators to perform the
+conversions. The `explicit` setting should work everywhere. The `le` setting
+uses unchecked type conversions. This may be faster but requires a
+Little-Endian machine and an Ada compiler which uses compatible machine
+representation for the types.
+
 `spark_norx_external.gpr` covers the same code, but does not trigger rebuilds
 of the library. `spark_norx_examples.gpr` builds the example code.
 
