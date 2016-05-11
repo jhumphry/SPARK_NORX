@@ -340,26 +340,42 @@ package body NORX is
 
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word) is
       Tag_Index : Storage_Offset := Tag'First;
+      Tag_Words_Remaining : Natural := Tag'Length / Natural(Bytes);
+      Iterations_Needed : constant Positive := (t / (r+1)) + 1;
    begin
       S(15) := S(15) xor v;
       F_l(S);
       F_l(S);
 
       Finalise_Iterations:
-      loop
-         pragma Loop_Invariant (Tag_Index <= Tag'Last);
+      for I in 1..Iterations_Needed loop
+         pragma Loop_Invariant (Tag_Index = Tag'First +
+                                  Storage_Offset((I-1) * Rate_Words));
 
-         for I in 0 .. Rate_Words-1 loop
-            pragma Loop_Invariant (Tag_Index < Storage_Offset'Last - Bytes);
+         pragma Loop_Invariant (Tag_Words_Remaining = Tag'Length / Natural(Bytes)
+                                - (I-1) * Rate_Words);
+
+         for J in 0 .. Integer'Min(Rate_Words, Tag_Words_Remaining)-1 loop
+
+            pragma Loop_Invariant (Tag_Index = Tag'First +
+                                     Storage_Offset((I-1) * Rate_Words) +
+                                       Storage_Offset(J) * Bytes);
+
             Tag(Tag_Index .. Tag_Index + Bytes - 1)
-              := Word_To_Storage_Array(S(I));
+              := Word_To_Storage_Array(S(J));
             Tag_Index := Tag_Index + Bytes;
-            exit Finalise_Iterations when Tag_Index > Tag'Last;
+
          end loop;
+
+         Tag_Words_Remaining := Integer'Max(0, Tag_Words_Remaining - Rate_Words);
+
+         exit Finalise_Iterations when Tag_Words_Remaining = 0;
 
          S(15) := S(15) xor v;
          F_l(S);
       end loop Finalise_Iterations;
+
+      pragma Assert (Tag_Index = Tag'Last + 1);
 
    end Finalise;
 
