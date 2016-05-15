@@ -112,7 +112,7 @@ package body NORX is
         := (others => 0);
    begin
       Result := X & 16#01# & Padding;
-      Result(Result'Last) := 16#80#;
+      Result(Result'Last) := Result(Result'Last) or 16#80#;
       return Result;
    end Pad_r;
 
