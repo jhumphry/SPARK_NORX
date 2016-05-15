@@ -42,14 +42,18 @@ and `State` types.
 
 ## Examples
 
-Two example programs are included. `norx_example` is a simple example of using
-the high-level API and demonstrates successful encryption and decryption, and
-also unsuccessful decryption if the tag is altered.
+Three example programs are included. `norx_example` is a simple example of
+using the high-level API and demonstrates successful encryption and
+decryption, and also unsuccessful decryption if the tag is altered.
 
 `norx_test_vectors` uses the lower-level API to print the trace of a sample
 encryption for each of the suggested variants of NORX. These can be compared
 with the output from running `make debug` on the reference C code provided by
 the NORX designers.
+
+`norx_check_padding` checks that authenticated encryption and decryption works
+correctly when the lengths of the header, message and trailer inputs vary.
+This is primarily to check for any bugs in the implementation of the padding.
 
 ## Status of SPARK proof
 
@@ -71,7 +75,7 @@ data if the tag verification failed. The GPL SPARK prover `gnatprove` shipped
 with the GNAT GPL 2015 Ada compiler from [AdaCore](http://libre.adacore.com/)
 was used to develop this project.
 
-## Project files and examples
+## Project files
 
 Three project files for use with `GPRBuild` are provided. `spark_norx.gpr`
 builds the NORX code as a static library. It takes two optional parameters:
