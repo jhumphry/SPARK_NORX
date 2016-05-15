@@ -26,11 +26,11 @@ procedure Display_NORX_Traces is
 
    K : NORX_Package.Key_Type;
    N : NORX_Package.Nonce_Type;
-   A, M, Z : Storage_Array(0..127);
-   C : Storage_Array(0..127);
+   A, M, Z : Storage_Array(0..Test_Message_Length-1);
+   C : Storage_Array(0..Test_Message_Length-1);
    T : NORX_Package.Tag_Type;
 
-   M2 : Storage_Array(0..127);
+   M2 : Storage_Array(0..Test_Message_Length-1);
    T2 : NORX_Package.Tag_Type;
 
 begin
