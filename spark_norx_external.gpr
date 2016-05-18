@@ -14,6 +14,7 @@ library project SPARK_NORX_External is
    for Library_Kind use "static";
 
    for Library_Interface use   ("NORX",
+                                "NORX.Compare_Tags",
                                 "NORX_Definitions",
                                 "NORX_Load_Store",
                                 "NORX.Access_Internals",
