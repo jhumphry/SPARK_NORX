@@ -12,10 +12,6 @@ package body NORX.Utils is
      Ada.Text_IO.Modular_IO(Num => Word);
    use Unsigned_64_IO;
 
-   package Storage_Text_IO is new
-     Ada.Text_IO.Modular_IO(Num => Storage_Element);
-   use Storage_Text_IO;
-
    procedure Put_State(S : in State) is
    begin
       for I in S'Range loop
