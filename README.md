@@ -67,7 +67,8 @@ zeroing the output arrays at the start of the procedures would resolve these
 unproved checks, but this would be inefficient and would hide any real errors.
 Instead assertions of the form `C_Index = C'Last + 1` are proved at the end of
 the procedures. These show that the whole array has been iterated over by the
-time the procedure exits.
+time the procedure exits. `pragma Annotate` has been used to justify the
+output array initialisation for these procedures.
 
 However, SPARK is able to prove the absence of all other potential sources of
 run-time exceptions, and proves that `AEADDec` will not return any decrypted

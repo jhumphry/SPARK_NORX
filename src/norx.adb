@@ -246,6 +246,10 @@ package body NORX is
       end if;
    end Encrypt;
 
+   pragma Annotate (GNATprove, False_Positive,
+                    """C"" might not be initialized",
+                    "The loop initialises C from C'First to C_Index-1 and the second block of code initialises C_Index to C'Last");
+
    procedure Decrypt_Block (S : in out State;
                             C : in Rate_Storage_Array;
                             M : out Rate_Storage_Array;
@@ -310,6 +314,10 @@ package body NORX is
       M := Last_Block(1..C'Length);
    end Decrypt_Last_Block;
 
+   pragma Annotate (GNATprove, False_Positive,
+                    """Last_Block"" might not be initialized",
+                    "Initialisation and assertion demonstrate that Index is incremented over every element of Last_Block");
+
    procedure Decrypt (S : in out State;
                       C : in Storage_Array;
                       M : out Storage_Array;
@@ -337,6 +345,10 @@ package body NORX is
 
       end if;
    end Decrypt;
+
+   pragma Annotate (GNATprove, False_Positive,
+                    """M"" might not be initialized",
+                    "The loop initialises M from M'First to M_Index-1 and the call to Decrypt_Last_Block initialises M_Index to M'Last");
 
    procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word) is
       Tag_Index : Storage_Offset := Tag'First;
@@ -378,6 +390,10 @@ package body NORX is
       pragma Assert (Tag_Index = Tag'Last + 1);
 
    end Finalise;
+
+   pragma Annotate (GNATprove, False_Positive,
+                    """Tag"" might not be initialized",
+                    "Initialisation and assertion demonstrate that Tag_Index is incremented over every element of Tag");
 
    -- ***
    -- High-level API as described in Figure 2.5 of the NORX specification
