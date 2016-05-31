@@ -38,7 +38,9 @@ package body NORX is
 
    subtype Rate_Storage_Array is Storage_Array(1..Rate_Bytes_SO);
 
-   u : State; -- The initialisation constants
+   -- The initialisation constants
+   u : State
+     with Constant_After_Elaboration;
 
    -- ***
    -- Implementation of the the permutation F^{l} as described in Figure 2.4
