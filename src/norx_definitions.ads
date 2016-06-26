@@ -18,6 +18,9 @@ with Pure, SPARK_Mode => On is
 
    subtype Round_Count is Integer range 1..63;
 
+   subtype Key_Material_Position is Integer
+     with Static_Predicate => Key_Material_Position in 2 | 4;
+
    type Rotation_Offsets is array (Integer range 0..3) of Natural;
 
 end NORX_Definitions;

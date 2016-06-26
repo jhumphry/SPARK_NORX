@@ -132,7 +132,6 @@ package body NORX is
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type)
                         return State is
       S : State := u;
-      Key_Material_Position : constant Natural := (if w = 16 then 2 else 4);
    begin
       for I in 0..Nonce_Words-1 loop
          S(I) :=
@@ -140,7 +139,7 @@ package body NORX is
       end loop;
 
       for I in 0..Key_Words-1 loop
-         S(I + Key_Material_Position) :=
+         S(I + Key_Position) :=
            Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
       end loop;
 

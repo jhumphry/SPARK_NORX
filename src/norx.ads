@@ -30,6 +30,8 @@ generic
       Amount : Natural) return Word is <>;
    l : Round_Count; -- Rounds of the permutation to perform 1 ≤ l ≤ 63
    k : Positive; -- Key size in bits
+   Key_Position : Key_Material_Position := 4; -- Position in the NORX state at
+                                              -- which the key is added
    t : Positive; -- Tag size in bits (t ≤ 4w for NORX32 and NORX64)
    n : Positive; -- Nonce size in bits
    rot : Rotation_Offsets; -- Rotation offsets for permutation function
