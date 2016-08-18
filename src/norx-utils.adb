@@ -8,9 +8,9 @@ use Ada.Text_IO;
 
 package body NORX.Utils is
 
-   package Unsigned_64_IO is new
+   package Word_IO is new
      Ada.Text_IO.Modular_IO(Num => Word);
-   use Unsigned_64_IO;
+   use Word_IO;
 
    procedure Put_State(S : in State) is
    begin
