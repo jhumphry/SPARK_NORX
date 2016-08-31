@@ -13,6 +13,7 @@ pragma SPARK_Mode (Off);
 
 with NORX6441;
 with NORX.C_AEAD_Encrypt;
+with NORX.C_AEAD_Decrypt;
 
 package NORX6441_C_Interface is
 
@@ -20,5 +21,10 @@ package NORX6441_C_Interface is
      with Export => True,
      Convention => C,
      External_Name => "norx6441_aead_encrypt";
+
+   function NORX6441_AEAD_Decrypt is new NORX6441.C_AEAD_Decrypt
+     with Export => True,
+     Convention => C,
+     External_Name => "norx6441_aead_decrypt";
 
 end NORX6441_C_Interface;

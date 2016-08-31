@@ -18,6 +18,7 @@ with SPARK_Mode => Off is
 
    use System.Storage_Elements;
 
+   subtype int is Interfaces.C.int;
    subtype size_t is Interfaces.C.size_t;
    subtype ptrdiff_t is Interfaces.C.ptrdiff_t;
 
