@@ -6,6 +6,8 @@
 
 -- Copyright (c) 2016, James Humphry - see LICENSE file for details
 
+pragma SPARK_Mode (Off);
+
 pragma Restrictions(No_Implementation_Attributes,
                     No_Implementation_Identifiers,
                     No_Implementation_Units,
