@@ -27,8 +27,7 @@ library project SPARK_NORX_C is
                                 "NORX.Compare_Tags",
                                 "NORX_Definitions",
                                 "NORX_Load_Store",
-                                "NORX.C_Interface",
-                                "Norx.c_Interface.AEAD_Encrypt",
+                                "NORX.C_AEAD_Encrypt",
                                 "NORX_C_Definitions",
                                 "NORX6441",
                                 "NORX6441_C_Interface");

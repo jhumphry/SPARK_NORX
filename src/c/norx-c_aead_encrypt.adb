@@ -1,4 +1,4 @@
--- NORX.C_Interface.AEAD_Encrypt
+-- NORX.C_AEAD_Encrypt
 
 -- a C API for an Ada implementation of the NORX Authenticated Encryption
 -- Algorithm created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel
@@ -11,20 +11,19 @@ pragma Restrictions(No_Implementation_Attributes,
                     No_Implementation_Units,
                     No_Obsolescent_Features);
 
-procedure NORX.C_Interface.AEAD_Encrypt (c : in uchar_ptr; clen : access size_t;
-                                         a : in uchar_ptr; alen : size_t;
-                                         m : in uchar_ptr; mlen : size_t;
-                                         z : in uchar_ptr; zlen : size_t;
-                                         nonce : in uchar_ptr;
-                                         key : in uchar_ptr) is
+procedure NORX.C_AEAD_Encrypt (c : in uchar_ptr; clen : access size_t;
+                               a : in uchar_ptr; alen : size_t;
+                               m : in uchar_ptr; mlen : size_t;
+                               z : in uchar_ptr; zlen : size_t;
+                               nonce : in uchar_ptr;
+                               key : in uchar_ptr) is
 
-   -- The NORX C API uses size_t rather than ptrdiff_t so some annoying
-   -- conversions are required.
-   subtype ptrdiff_t is Interfaces.C.ptrdiff_t;
-   use type Interfaces.C.size_t;
+   use type size_t;
 
    use NORX_C_Definitions.Storage_Element_Pointers;
 
+   -- The NORX C API uses size_t rather than ptrdiff_t so some annoying
+   -- conversions are required.
    A_SA : constant Storage_Array := Value (Ref => a, Length => ptrdiff_t(alen));
    M_SA : constant Storage_Array := Value (Ref => m, Length => ptrdiff_t(mlen));
    Z_SA : constant Storage_Array := Value (Ref => z, Length => ptrdiff_t(zlen));

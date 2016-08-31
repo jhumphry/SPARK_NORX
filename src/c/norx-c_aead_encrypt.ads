@@ -1,4 +1,4 @@
--- NORX.C_Interface.AEAD_Encrypt
+-- NORX.C_AEAD_Encrypt
 
 -- a C API for an Ada implementation of the NORX Authenticated Encryption
 -- Algorithm created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel
@@ -20,10 +20,13 @@ pragma Restrictions(No_Implementation_Attributes,
 --             const unsigned char *z, size_t zlen,
 --             const unsigned char *nonce, const unsigned char *key);
 
+with NORX_C_Definitions;
+use NORX_C_Definitions;
+
 generic
-procedure NORX.C_Interface.AEAD_Encrypt (c : in uchar_ptr; clen : access size_t;
-                                         a : in uchar_ptr; alen : size_t;
-                                         m : in uchar_ptr; mlen : size_t;
-                                         z : in uchar_ptr; zlen : size_t;
-                                         nonce : in uchar_ptr;
-                                         key : in uchar_ptr);
+procedure NORX.C_AEAD_Encrypt (c : in uchar_ptr; clen : access size_t;
+                               a : in uchar_ptr; alen : size_t;
+                               m : in uchar_ptr; mlen : size_t;
+                               z : in uchar_ptr; zlen : size_t;
+                               nonce : in uchar_ptr;
+                               key : in uchar_ptr);
