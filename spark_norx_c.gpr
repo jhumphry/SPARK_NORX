@@ -74,10 +74,4 @@ library project SPARK_NORX_C is
       end case;
    end Compiler;
 
-   package Prove is
-      for Switches use ("-j2", "--timeout=3",
-                        "--proof=progressive",
-                        "--warnings=continue");
-   end Prove;
-
 end SPARK_NORX_C;
