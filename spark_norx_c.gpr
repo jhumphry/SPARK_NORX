@@ -21,7 +21,8 @@ library project SPARK_NORX_C is
    for Library_Name use "spark_norx_c";
    for Library_Kind use "dynamic";
    for Library_Version use "libspark_norx_c.so." & Version;
-   for Library_Standalone use "standard";
+   for Library_Standalone use "encapsulated";
+   for Library_Auto_Init use "true";
 
    for Library_Interface use   ("NORX",
                                 "NORX.Compare_Tags",
