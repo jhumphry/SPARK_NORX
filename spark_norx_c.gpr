@@ -16,7 +16,7 @@ library project SPARK_NORX_C is
    type Load_Store_Type is ("explicit", "le");
    Load_Store : Load_Store_Type := external ("load_store", "explicit");
 
-   for Languages use ("Ada");
+   for Languages use ("Ada", "C");
 
    for Library_Name use "spark_norx_c";
    for Library_Kind use "dynamic";
