@@ -25,6 +25,7 @@ package body NORX is
    Rate_Bytes_SO : constant Storage_Offset := Storage_Offset(r / 8);
    Rate_Words : constant Integer := r / w;
    Key_Words : constant Integer := k / w;
+   Tag_Words : constant Integer := t / w;
    Nonce_Words : constant Integer := n / w;
 
    type Domains is (Header, Payload, Trailer, Tag, Branching, Merging);
@@ -363,8 +364,8 @@ package body NORX is
                        Tag : out Tag_Type;
                        v : in Word) is
       Tag_Index : Storage_Offset := Tag'First;
-      Tag_Words_Remaining : Natural := Tag'Length / Natural(Bytes);
-      Iterations_Needed : constant Positive := (t / (r+1)) + 1;
+--        Tag_Words_Remaining : Natural := Tag'Length / Natural(Bytes);
+--        Iterations_Needed : constant Positive := (t / (r+1)) + 1;
    begin
       S(15) := S(15) xor v;
 
@@ -382,33 +383,40 @@ package body NORX is
            Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
       end loop;
 
-      Finalise_Iterations:
-      for I in 1..Iterations_Needed loop
-         pragma Loop_Invariant (Tag_Index = Tag'First +
-                                  Storage_Offset((I-1) * Rate_Words));
+      for I in 0..Tag_Words-1 loop
+         pragma Loop_Invariant (Tag_Index = Tag'First + Storage_Offset(I) * Bytes);
+         Tag(Tag_Index..Tag_Index+Bytes-1) :=
+           Word_To_Storage_Array(S(16-Tag_Words+I));
+         Tag_Index := Tag_Index + Bytes;
+      end loop;
 
-         pragma Loop_Invariant (Tag_Words_Remaining = Tag'Length / Natural(Bytes)
-                                - (I-1) * Rate_Words);
-
-         for J in 0 .. Integer'Min(Rate_Words, Tag_Words_Remaining)-1 loop
-
-            pragma Loop_Invariant (Tag_Index = Tag'First +
-                                     Storage_Offset((I-1) * Rate_Words) +
-                                       Storage_Offset(J) * Bytes);
-
-            Tag(Tag_Index .. Tag_Index + Bytes - 1)
-              := Word_To_Storage_Array(S(J));
-            Tag_Index := Tag_Index + Bytes;
-
-         end loop;
-
-         Tag_Words_Remaining := Integer'Max(0, Tag_Words_Remaining - Rate_Words);
-
-         exit Finalise_Iterations when Tag_Words_Remaining = 0;
-
-         S(15) := S(15) xor v;
-         F_l(S);
-      end loop Finalise_Iterations;
+--        Finalise_Iterations:
+--        for I in 1..Iterations_Needed loop
+--           pragma Loop_Invariant (Tag_Index = Tag'First +
+--                                    Storage_Offset((I-1) * Rate_Words));
+--
+--           pragma Loop_Invariant (Tag_Words_Remaining = Tag'Length / Natural(Bytes)
+--                                  - (I-1) * Rate_Words);
+--
+--           for J in 0 .. Integer'Min(Rate_Words, Tag_Words_Remaining)-1 loop
+--
+--              pragma Loop_Invariant (Tag_Index = Tag'First +
+--                                       Storage_Offset((I-1) * Rate_Words) +
+--                                         Storage_Offset(J) * Bytes);
+--
+--              Tag(Tag_Index .. Tag_Index + Bytes - 1)
+--                := Word_To_Storage_Array(S(J));
+--              Tag_Index := Tag_Index + Bytes;
+--
+--           end loop;
+--
+--           Tag_Words_Remaining := Integer'Max(0, Tag_Words_Remaining - Rate_Words);
+--
+--           exit Finalise_Iterations when Tag_Words_Remaining = 0;
+--
+--           S(15) := S(15) xor v;
+--           F_l(S);
+--        end loop Finalise_Iterations;
 
       pragma Assert (Tag_Index = Tag'Last + 1);
 
