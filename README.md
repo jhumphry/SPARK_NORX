@@ -14,6 +14,12 @@ implementation (for example, `Storage_Element` must be an 8-bit byte) and of
 the generic parameters (for example the rate, key size etc must all be
 multiples of the word size).
 
+This project targets version 3.0 of the specification. The variants targeted
+at low-end systems, NORX8 and NORX16, are based on the separate paper 'NORX8
+and NORX16: Authenticated Encryption for Low-End Systems' by the same authors,
+but with the same changes to key mixing and tag extraction as were made in the
+revised version of the main specification.
+
 This project is free software (using the ISC permissive licence) and is
 provided with no warranties, as set out in the file `LICENSE`.
 
@@ -83,7 +89,7 @@ time the procedure exits. `pragma Annotate` has been used to justify the
 output array initialisation for these procedures.
 
 However, SPARK GPL 2016 is able to prove the absence of all other potential
-sources of run-time exceptions, which amount to 97% of the checks, without
+sources of run-time exceptions, which amount to 98% of the checks, without
 manual intervention. It also proves that `AEADDec` will not return any
 decrypted data if the tag verification failed. The GPL SPARK prover
 `gnatprove` shipped with SPARK GPL 2016 from
