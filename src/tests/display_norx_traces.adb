@@ -76,7 +76,7 @@ begin
    Put_State(State_Trace);
    New_Line;
 
-   Finalise(State_Trace, T, 16#08#);
+   Finalise(State_Trace, K, T, 16#08#);
    Put_Line("State after finalisation:");
    Put_State(State_Trace);
    New_Line;
@@ -103,7 +103,7 @@ begin
    Absorb(State_Trace, Z, 16#04#);
    Put_Line("Absorbing trailer into state");
 
-   Finalise(State_Trace, T2, 16#08#);
+   Finalise(State_Trace, K, T2, 16#08#);
    Put_Line("Finalising state");
    New_Line;
 

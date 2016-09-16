@@ -149,7 +149,10 @@ private
                     Valid_Storage_Array_Parameter(C'Length, C'Last) and
                       Valid_Storage_Array_Parameter(M'Length, M'Last));
 
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
+   procedure Finalise (S : in out State;
+                       Key : in Key_Type;
+                       Tag : out Tag_Type;
+                       v : in Word);
 
    -- These compile-time checks test requirements that cannot be expressed
    -- in the generic formal parameters. Currently compile-time checks are

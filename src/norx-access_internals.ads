@@ -29,7 +29,10 @@ package NORX.Access_Internals is
                       v : in Word)
      with Pre => (C'Length = M'Length);
 
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word);
+   procedure Finalise (S : in out State;
+                       Key : in Key_Type;
+                       Tag : out Tag_Type;
+                       v : in Word);
 
 private
 
@@ -54,7 +57,10 @@ private
                       M : out Storage_Array;
                       v : in Word) renames NORX.Decrypt;
 
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word)
+   procedure Finalise (S : in out State;
+                       Key : in Key_Type;
+                       Tag : out Tag_Type;
+                       v : in Word)
      renames NORX.Finalise;
 
 end NORX.Access_Internals;

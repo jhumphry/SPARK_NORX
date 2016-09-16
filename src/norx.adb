@@ -147,7 +147,14 @@ package body NORX is
       S(13) := S(13) xor Word(l);
       S(14) := S(14) xor Word(p);
       S(15) := S(15) xor Word(t);
+
       F_l(S);
+
+      for I in 0..Key_Words-1 loop
+         S(16-Key_Words+I) := S(16-Key_Words+I) xor
+           Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+      end loop;
+
       return S;
    end Initialise;
 
@@ -351,14 +358,29 @@ package body NORX is
                     """M"" might not be initialized",
                     "The loop initialises M from M'First to M_Index-1 and the call to Decrypt_Last_Block initialises M_Index to M'Last");
 
-   procedure Finalise (S : in out State; Tag : out Tag_Type; v : in Word) is
+   procedure Finalise (S : in out State;
+                       Key : in Key_Type;
+                       Tag : out Tag_Type;
+                       v : in Word) is
       Tag_Index : Storage_Offset := Tag'First;
       Tag_Words_Remaining : Natural := Tag'Length / Natural(Bytes);
       Iterations_Needed : constant Positive := (t / (r+1)) + 1;
    begin
       S(15) := S(15) xor v;
+
       F_l(S);
+
+      for I in 0..Key_Words-1 loop
+         S(16-Key_Words+I) := S(16-Key_Words+I) xor
+           Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+      end loop;
+
       F_l(S);
+
+      for I in 0..Key_Words-1 loop
+         S(16-Key_Words+I) := S(16-Key_Words+I) xor
+           Storage_Array_To_Word(Key(Storage_Offset(I)*Bytes .. Storage_Offset(I+1)*Bytes-1));
+      end loop;
 
       Finalise_Iterations:
       for I in 1..Iterations_Needed loop
@@ -412,7 +434,7 @@ package body NORX is
       Absorb(S, A, Domain_Separation(Header));
       Encrypt(S, M, C, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
-      Finalise(S, T, Domain_Separation(Tag));
+      Finalise(S, K, T, Domain_Separation(Tag));
       pragma Unreferenced (S);
    end AEADEnc;
 
@@ -430,7 +452,7 @@ package body NORX is
       Absorb(S, A, Domain_Separation(Header));
       Decrypt(S, C, M, Domain_Separation(Payload));
       Absorb(S, Z, Domain_Separation(Trailer));
-      Finalise(S, T2, Domain_Separation(Tag));
+      Finalise(S, K, T2, Domain_Separation(Tag));
       pragma Unreferenced (S);
       if Compare_Tags_Constant_Time(T, T2) then
          Valid := True;
