@@ -32,7 +32,14 @@ library project SPARK_NORX_C is
                                 "NORX.C_AEAD_Decrypt",
                                 "NORX_C_Definitions",
                                 "NORX6441",
-                                "NORX6441_C_Interface");
+                                "NORX6441_C_Interface",
+                                "NORX3241",
+                                "NORX3241_C_Interface",
+                                "NORX6461",
+                                "NORX6461_C_Interface",
+                                "NORX3261",
+                                "NORX3261_C_Interface"
+                               );
 
    Main_Source_Dirs := ("src/", "src/c/");
    Load_Store_Dirs := "";
