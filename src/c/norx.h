@@ -26,4 +26,46 @@ int norx6441_aead_decrypt(
         const unsigned char *z, size_t zlen,
         const unsigned char *nonce, const unsigned char *key);
 
+void norx3241_aead_encrypt(
+        unsigned char *c, size_t *clen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *m, size_t mlen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
+int norx3241_aead_decrypt(
+        unsigned char *m, size_t *mlen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *c, size_t clen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
+void norx6461_aead_encrypt(
+        unsigned char *c, size_t *clen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *m, size_t mlen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
+int norx6461_aead_decrypt(
+        unsigned char *m, size_t *mlen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *c, size_t clen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
+void norx3261_aead_encrypt(
+        unsigned char *c, size_t *clen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *m, size_t mlen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
+int norx3261_aead_decrypt(
+        unsigned char *m, size_t *mlen,
+        const unsigned char *a, size_t alen,
+        const unsigned char *c, size_t clen,
+        const unsigned char *z, size_t zlen,
+        const unsigned char *nonce, const unsigned char *key);
+
 #endif
