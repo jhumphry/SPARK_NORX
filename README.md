@@ -14,11 +14,12 @@ implementation (for example, `Storage_Element` must be an 8-bit byte) and of
 the generic parameters (for example the rate, key size etc must all be
 multiples of the word size).
 
-This project targets version 3.0 of the specification. The variants targeted
-at low-end systems, NORX8 and NORX16, are based on the separate paper 'NORX8
-and NORX16: Authenticated Encryption for Low-End Systems' by the same authors,
-but with the same changes to key mixing and tag extraction as were made in the
-revised version of the main specification.
+This project targets version 3.0 of the specification for NORX32 and NORX64.
+The variants for low-end systems are based on the separate paper 'NORX8 and
+NORX16: Authenticated Encryption for Low-End Systems' by the same authors.
+Some modifications have been applied to keep NORX8/16 consistent with the
+revisions made to the main specification. These are therefore non-standard as
+the NORX designers have not issued a revision to the NORX8/16 paper.
 
 This project is free software (using the ISC permissive licence) and is
 provided with no warranties, as set out in the file `LICENSE`.
