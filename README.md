@@ -47,13 +47,6 @@ to follow the internal state of the cipher as it processes some data.
 `NORX.Utils` contains useful helper functions for printing out `Storage_Array`
 and `State` types.
 
-`NORX6441_C_Interface` supplies two subroutines for the NORX64-4-1 variant
-that are exported using the C-language ABI convention, and take C-style
-parameters. These may not be as fast as a native C API as data may need to be
-copied in order to do conversions between Ada arrays and C-style pointers.
-Note that this package is not included in the standard library build (see
-below). It is also not covered by the SPARK proofs.
-
 ## Examples
 
 Three example programs are included. `norx_example` is a simple example of
@@ -68,10 +61,6 @@ the NORX designers.
 `norx_check_padding` checks that authenticated encryption and decryption works
 correctly when the lengths of the header, message and trailer inputs vary.
 This is primarily to check for any bugs in the implementation of the padding.
-
-The `make_c_example.sh` script shows how to build the library including the
-C-compatible API and uses it to compile and run the test-vector program from
-the original C reference code.
 
 ## Status of SPARK proof
 
@@ -113,9 +102,6 @@ representation for the types.
 
 `spark_norx_external.gpr` covers the same code, but does not trigger rebuilds
 of the library. `spark_norx_examples.gpr` builds the example code.
-
-`spark_norx_c.gpr` builds the library including the C API. By default this is
-referenced as `-lspark_norx_c` to distinguish it from the regular library.
 
 ## Using GNATprove for verification
 
