@@ -21,7 +21,7 @@ function NORX.C_AEAD_Decrypt (m : in uchar_ptr; mlen : access size_t;
    use type int;
    use type size_t;
 
-   tag_bytes : constant size_t := size_t(t/8);
+   tag_bytes : constant size_t := size_t(Tag_Type'Length);
 
    use NORX_C_Definitions.Storage_Element_Pointers;
 
@@ -53,7 +53,7 @@ begin
               Target => m,
               Length => ptrdiff_t(clen - tag_bytes));
 
-   mlen.all := clen - size_t(t/8);
+   mlen.all := clen - size_t(Tag_Type'Length);
 
    if Valid then
       return 0;

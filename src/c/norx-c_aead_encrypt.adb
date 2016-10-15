@@ -30,7 +30,7 @@ procedure NORX.C_AEAD_Encrypt (c : in uchar_ptr; clen : access size_t;
    Nonce_SA : constant Nonce_Type :=
      Value (Ref => nonce, Length => ptrdiff_t(n/8));
    Key_SA : constant Key_Type := Value (Ref => key, Length => ptrdiff_t(k/8));
-   Tag_SA : Tag_Type;
+   Tag_SA : aliased Tag_Type;
    C_SA : aliased Storage_Array(M_SA'Range);
 begin
    AEADEnc(K => Key_SA,
@@ -45,7 +45,7 @@ begin
               Length => ptrdiff_t(mlen));
    Copy_Array(Source => Tag_SA(Tag_SA'First)'Unchecked_Access,
               Target => c + ptrdiff_t(mlen),
-              Length => ptrdiff_t(t/8));
+              Length => ptrdiff_t(Tag_Type'Length));
 
-   clen.all := mlen + size_t(t/8);
+   clen.all := mlen + size_t(Tag_Type'Length);
 end;
