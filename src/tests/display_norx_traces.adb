@@ -39,7 +39,7 @@ begin
    end loop;
 
    for I in N'Range loop
-      N(I) := (15 - Storage_Element(I)) * 16;
+      N(I) := 32 + Storage_Element(I);
    end loop;
 
    for I in A'Range loop
