@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This is an Ada 2012 / SPARK 2014 project that implements the
-[NORX](https://norx.io/) Authenticated Encryption with Additional Data
-Algorithm, a third round candidate in the
+This is an Ada 2012 / [SPARK 2014](http://spark-2014.org/) project that
+implements the [NORX](https://norx.io/) Authenticated Encryption with
+Additional Data Algorithm, a third round candidate in the
 [CAESAR](http://competitions.cr.yp.to/caesar.html) competition. NORX was
 designed by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves.
 
@@ -16,10 +16,9 @@ multiples of the word size).
 
 This project targets version 3.0 of the specification for NORX32 and NORX64.
 The variants for low-end systems are based on the separate paper 'NORX8 and
-NORX16: Authenticated Encryption for Low-End Systems' by the same authors.
-Some modifications have been applied to keep NORX8/16 consistent with the
-revisions made to the main specification. These are therefore non-standard as
-the NORX designers have not issued a revision to the NORX8/16 paper.
+NORX16: Authenticated Encryption for Low-End Systems' by the same authors but
+with some modifications applied to maintain consistency with the revisions
+made to the main specification.
 
 This project is free software (using the ISC permissive licence) and is
 provided with no warranties, as set out in the file `LICENSE`.
