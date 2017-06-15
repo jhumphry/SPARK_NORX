@@ -33,8 +33,9 @@ project SPARK_NORX_Examples is
                                               "-gnatyaAbCdfhiknprux");
 
          when "optimize" | "optimise" =>
-            for Default_Switches ("ada") use ("-gnat2012", "-O2",
-                                              "-gnatn", "-funroll-loops");
+            for Default_Switches ("ada") use ("-gnat2012", "-O2", "-gnatp",
+                                              "-gnatn", "-funroll-loops",
+                                              "-fPIE");
 
       end case;
    end Compiler;

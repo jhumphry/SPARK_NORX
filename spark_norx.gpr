@@ -56,14 +56,18 @@ library project SPARK_NORX is
                                               "-gnatf", "-gnato",
                                               "-gnatVa", "-gnateA",
                                               "-gnatwa.f", "-gnatwZ",
-                                              "-gnatyaAbCdfhiknprux");
+                                              "-gnatyaAbCdfhiknprux",
+                                              "-fPIC");
 
          when "optimize" | "optimise" =>
-            for Default_Switches ("ada") use ("-gnat2012", "-O2",
-                                              "-gnatn", "-funroll-loops");
+            for Default_Switches ("ada") use ("-gnat2012", "-O2", "-gnatp",
+                                              "-gnatn", "-funroll-loops",
+                                              "-fPIC");
             for Switches ("norx-compare_tags.adb") use ("-gnat2012", "-O0",
+                                                        "-gnatp",
                                                         "-gnatn",
-                                                        "-funroll-loops");
+                                                        "-funroll-loops",
+                                                        "-fPIC");
 
       end case;
    end Compiler;
