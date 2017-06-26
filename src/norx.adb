@@ -2,10 +2,9 @@
 -- an Ada implementation of the NORX Authenticated Encryption Algorithm
 -- created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves
 
--- Copyright (c) 2016, James Humphry - see LICENSE file for details
+-- Copyright (c) 2016-2017, James Humphry - see LICENSE file for details
 
 pragma Restrictions(No_Implementation_Attributes,
-                    No_Implementation_Identifiers,
                     No_Implementation_Units,
                     No_Obsolescent_Features);
 
@@ -21,7 +20,6 @@ package body NORX is
                                --  of degree 1 i.e. only serial NORX
 
    Bytes : constant Storage_Offset := Storage_Offset(w / 8);
-   Rate_Bytes_I : constant Integer := (r / 8);
    Rate_Bytes_SO : constant Storage_Offset := Storage_Offset(r / 8);
    Rate_Words : constant Integer := r / w;
    Key_Words : constant Integer := k / w;
@@ -107,9 +105,33 @@ package body NORX is
    -- Internal use routines
    -- ***
 
+   function Valid_Paddable (X : in Storage_Array) return Boolean is
+     (
+      -- First check that the array can be padded without exceeding the range
+      -- of a Storage_Array
+      X'Last < Storage_Offset'Last - Rate_Bytes_SO and
+        (
+         -- now check X'Length < Rate_Bytes_I else padding is not needed...
+         -- but in a way that doesn't overflow given Storage_Offset can hold
+         -- a range greater than Long_Long_Integer
+         if X'Last < X'First then
+            True
+
+         elsif X'First < 0 then
+           (
+                (Long_Long_Integer (X'Last) < Long_Long_Integer'Last +
+                       Long_Long_Integer (X'First))
+            and then
+            X'Last - X'First < Rate_Bytes_SO - 1)
+
+         else
+            X'Last - X'First < Rate_Bytes_SO - 1
+        )
+     )
+   with Ghost;
+
    function Pad_r (X : in Storage_Array) return Rate_Storage_Array
-     with Inline, Pre=> (X'Length < Rate_Bytes_I and
-                           X'Last < Storage_Offset'Last - Rate_Bytes_SO) is
+     with Inline, Pre=> Valid_Paddable(X) is
       Result : Rate_Storage_Array;
       Padding : constant Storage_Array(1 .. Rate_Bytes_SO - Storage_Offset(X'Length + 1))
         := (others => 0);
@@ -182,6 +204,9 @@ package body NORX is
         := X'Length / Rate_Bytes_SO;
       X_Index : Storage_Offset := X'First;
    begin
+
+      pragma Assert (X'Last < Storage_Offset'Last - Storage_Offset(r/8));
+
       if X'Length > 0 then
 
          for I in 1..Number_Full_Blocks loop
@@ -285,11 +310,32 @@ package body NORX is
       pragma Assert (C_Index = C'Last + 1);
    end Decrypt_Block;
 
+   function Valid_Last_Ciphertext_Block (X : in Storage_Array) return Boolean is
+     (
+      if X'Last < X'First then
+         True
+
+      elsif X'First < 0 then
+        (
+             (Long_Long_Integer (X'Last) < Long_Long_Integer'Last +
+                    Long_Long_Integer (X'First))
+         and then
+         X'Last - X'First < Rate_Bytes_SO - 1)
+
+      else
+         X'Last - X'First < Rate_Bytes_SO - 1
+     )
+   with Ghost;
+
    procedure Decrypt_Last_Block (S : in out State;
                                  C : in Storage_Array;
                                  M : out Storage_Array;
                                  v : in Word)
-     with Inline, Pre => (M'Length = C'Length and C'Length < Rate_Bytes_I) is
+     with Inline, Pre => ( (Valid_Storage_Array_Parameter(M'First, M'Last) and
+                             Valid_Last_Ciphertext_Block(C) )
+                           and then
+                             M'Length = C'Length
+                          ) is
 
       Last_Block : Storage_Array(1..Rate_Bytes_SO);
       C_i : Word;
