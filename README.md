@@ -92,12 +92,12 @@ builds the NORX code as a static library. It takes two optional parameters:
 - `mode` can be set to `debug` (the default) or `optimise`/`optimize`. This
 sets appropriate compiler flags.
 
-- `load_store` can be set to `explicit` (the default) or `le`. This setting
-controls how arrays of bytes are converted into words. The `explicit` setting
-compiles functions that use bit shifts and bit-wise operators to perform the
-conversions. The `explicit` setting should work everywhere. The `le` setting
-uses unchecked type conversions. This may be faster but requires a
-Little-Endian machine and an Ada compiler which uses compatible machine
+- `load_store` can be set to `explicit` (the default) or `le`. This setting 
+controls how arrays of bytes are converted into words. The `explicit` setting 
+compiles functions that use bit shifts and bit-wise operators to perform the 
+conversions. The `explicit` setting should work everywhere. The `le` setting 
+uses unchecked type conversions. This may be faster but requires a 
+Little-Endian machine and an Ada compiler which uses compatible machine 
 representation for the types.
 
 `spark_norx_external.gpr` covers the same code, but does not trigger rebuilds
@@ -105,10 +105,10 @@ of the library. `spark_norx_examples.gpr` builds the example code.
 
 ## Using GNATprove for verification
 
-To automatically verify the code (apart from array initialisation as discussed
-above), the GPS IDE can be used. Alternatively the following commands can be
-used at the shell. The settings may need to be varied depending on the speed
-of your machine.
+To automatically verify the code (apart from array initialisation as discussed 
+above), the GPS IDE can be used. Alternatively the following commands can be 
+used at the shell. The settings may need to be varied depending on the speed of 
+your machine.
 
 - SPARK GPL 2015
 
@@ -117,5 +117,18 @@ of your machine.
 - SPARK GPL 2016
 
     gnatprove -P spark_norx.gpr -U -j0 --level=0 --proof=progressive --warnings=continue
+    
+- SPARK Discovery GPL 2017
+
+    gnatprove -P spark_norx.gpr -Xload_store=explicit -Xmode=debug -j0 --level=2
 
 Add `--report=all` if you want to see the checks that are proved as well.
+
+For SPARK Discovery GPL 2017 the built-in SMT solver, Alt-Ergo, may not be able 
+to prove all of the VC. Add the alternative Z3 and/or CVC4 provers as explained 
+in the SPARK user guide.
+
+## Acknowledgements
+
+Thanks to Philipp Jovanovic (NORX team), Claire Dross (AdaCore) and Yannick Moy 
+(AdaCore) for helpful comments and suggestions.
