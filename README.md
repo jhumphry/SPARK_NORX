@@ -77,12 +77,12 @@ the procedures. These show that the whole array has been iterated over by the
 time the procedure exits. `pragma Annotate` has been used to justify the
 output array initialisation for these procedures.
 
-However, SPARK GPL 2016 is able to prove the absence of all other potential
-sources of run-time exceptions, which amount to 98% of the checks, without
-manual intervention. It also proves that `AEADDec` will not return any
-decrypted data if the tag verification failed. The GPL SPARK prover
-`gnatprove` shipped with SPARK GPL 2016 from
-[AdaCore](http://libre.adacore.com/) is used for this project.
+However, SPARK GPL 2016 and SPARK Discovery GPL 2017 are able to prove the 
+absence of all other potential sources of run-time exceptions, which amount to 
+98% of the checks, without manual intervention. It also proves that `AEADDec` 
+will not return any decrypted data if the tag verification failed. The GPL 
+SPARK prover `gnatprove` shipped with SPARK Discovery GPL 2017 from 
+[AdaCore](http://libre.adacore.com/) is primarily used for this project.
 
 ## Project files
 
@@ -109,10 +109,6 @@ To automatically verify the code (apart from array initialisation as discussed
 above), the GPS IDE can be used. Alternatively the following commands can be 
 used at the shell. The settings may need to be varied depending on the speed of 
 your machine.
-
-- SPARK GPL 2015
-
-    gnatprove -P spark_norx.gpr -j0 --timeout=3 --proof=progressive --warnings=continue
 
 - SPARK GPL 2016
 
