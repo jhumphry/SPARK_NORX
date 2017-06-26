@@ -4,7 +4,7 @@
 -- for the case where the machine itself is LE or has dedicated assembly
 -- instructions that can perform the conversion.
 
--- Copyright (c) 2016, James Humphry - see LICENSE file for details
+-- Copyright (c) 2016-2017, James Humphry - see LICENSE file for details
 
 -- Note that all the Unsigned_xx types count as Implementation_Identifiers
 pragma Restrictions(No_Implementation_Attributes,
@@ -23,10 +23,29 @@ package NORX_Load_Store
    subtype E is Storage_Element;
    subtype Storage_Array_Single is Storage_Array(1..1);
 
+   function Check_Storage_Array_Length (X : in Storage_Array;
+                                        L : in Positive) return Boolean
+   is
+      (
+       if X'Last < X'First then
+            False
+
+         elsif X'First < 0 then
+           (
+                (Long_Long_Integer (X'Last) < Long_Long_Integer'Last +
+                       Long_Long_Integer (X'First))
+            and then
+            X'Last - X'First = Storage_Offset(L) - 1)
+
+         else
+          X'Last - X'First = Storage_Offset(L) - 1
+      )
+   with Ghost;
+
    function Storage_Array_To_Unsigned_8 (S : in Storage_Array)
                                          return Unsigned_8 is
      (Unsigned_8(S(S'First)))
-   with Inline, Pre => (S'Length = 1);
+   with Inline, Pre => (Check_Storage_Array_Length(S, 1));
 
    function Unsigned_8_To_Storage_Array (W : in Unsigned_8)
                                          return Storage_Array is
@@ -37,7 +56,7 @@ package NORX_Load_Store
                                           return Unsigned_16 is
      (Unsigned_16(S(S'First)) or
         Shift_Left(Unsigned_16(S(S'First + 1)), 8))
-   with Inline, Pre => (S'Length = 2);
+   with Inline, Pre => (Check_Storage_Array_Length(S, 2));
 
    function Unsigned_16_To_Storage_Array (W : in Unsigned_16)
                                           return Storage_Array is
@@ -51,7 +70,7 @@ package NORX_Load_Store
         Shift_Left(Unsigned_32(S(S'First + 1)), 8) or
           Shift_Left(Unsigned_32(S(S'First + 2)), 16) or
           Shift_Left(Unsigned_32(S(S'First + 3)), 24))
-   with Inline, Pre => (S'Length = 4);
+   with Inline, Pre => (Check_Storage_Array_Length(S, 4));
 
    function Unsigned_32_To_Storage_Array (W : in Unsigned_32)
                                           return Storage_Array is
@@ -71,7 +90,7 @@ package NORX_Load_Store
           Shift_Left(Unsigned_64(S(S'First + 5)), 40) or
           Shift_Left(Unsigned_64(S(S'First + 6)), 48) or
           Shift_Left(Unsigned_64(S(S'First + 7)), 56))
-   with Inline, Pre => (S'Length = 8);
+   with Inline, Pre => (Check_Storage_Array_Length(S, 8));
 
    function Unsigned_64_To_Storage_Array (W : in Unsigned_64)
                                           return Storage_Array is
