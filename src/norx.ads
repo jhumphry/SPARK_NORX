@@ -2,10 +2,9 @@
 -- an Ada implementation of the NORX Authenticated Encryption Algorithm
 -- created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves
 
--- Copyright (c) 2016, James Humphry - see LICENSE file for details
+-- Copyright (c) 2016-2017, James Humphry - see LICENSE file for details
 
 pragma Restrictions(No_Implementation_Attributes,
-                    No_Implementation_Identifiers,
                     No_Implementation_Units,
                     No_Obsolescent_Features);
 
@@ -64,11 +63,12 @@ package NORX is
                      Z : in Storage_Array;
                      C : out Storage_Array;
                      T : out Tag_Type)
-     with Pre => (C'Length = M'Length and
-                    Valid_Storage_Array_Parameter(A'Length, A'Last) and
-                      Valid_Storage_Array_Parameter(M'Length, M'Last) and
-                      Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
-                      Valid_Storage_Array_Parameter(C'Length, C'Last));
+     with Pre => ( (Valid_Storage_Array_Parameter(A) and
+                     Valid_Storage_Array_Parameter(M) and
+                     Valid_Storage_Array_Parameter(Z) and
+                     Valid_Storage_Array_Parameter(C'First, C'Last))
+                   and then C'Length = M'Length
+                  );
    -- AEADEnc carries out an authenticated encryption
    -- K : key data
    -- N : nonce
@@ -86,11 +86,12 @@ package NORX is
                      T : in Tag_Type;
                      M : out Storage_Array;
                      Valid : out Boolean)
-     with Pre => (M'Length = C'Length and
-                    Valid_Storage_Array_Parameter(A'Length, A'Last) and
-                      Valid_Storage_Array_Parameter(C'Length, C'Last) and
-                      Valid_Storage_Array_Parameter(Z'Length, Z'Last) and
-                      Valid_Storage_Array_Parameter(M'Length, M'Last)),
+     with Pre => ( (Valid_Storage_Array_Parameter(A) and
+                     Valid_Storage_Array_Parameter(C) and
+                     Valid_Storage_Array_Parameter(Z) and
+                     Valid_Storage_Array_Parameter(M'First, M'Last))
+                   and then M'Length = C'Length
+                  ),
      Post => (Valid or (for all I in M'Range => M(I) = 0));
    -- AEADEnc carries out an authenticated decryption
    -- K : key data
@@ -106,18 +107,43 @@ package NORX is
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
 
-   function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
+   function Valid_Storage_Array_Parameter(X : in Storage_Array)
+                                          return Boolean
+     with Ghost;
+   -- This ghost function simplifies the preconditions
+
+   function Valid_Storage_Array_Parameter(First : in Storage_Offset;
                                           Last : in Storage_Offset)
-                                          return Boolean;
-   -- This function simplifies the preconditions
+                                          return Boolean
+     with Ghost;
+   -- This ghost function simplifies the preconditions
 
 private
 
-   function Valid_Storage_Array_Parameter(Length : in Storage_Offset;
+   function Valid_Storage_Array_Parameter(X : in Storage_Array)
+                                          return Boolean is
+     (
+      if X'First <= 0 then
+        ((Long_Long_Integer (X'Last) < Long_Long_Integer'Last +
+              Long_Long_Integer (X'First))
+         and then
+         X'Last < Storage_Offset'Last - Storage_Offset(r/8))
+      else
+         X'Last < Storage_Offset'Last - Storage_Offset(r/8)
+   );
+
+   function Valid_Storage_Array_Parameter(First : in Storage_Offset;
                                           Last : in Storage_Offset)
                                           return Boolean is
-      (Length < Storage_Offset'Last and
-         Last < Storage_Offset'Last - Storage_Offset(r/8));
+     (
+      if First <= 0 then
+        ((Long_Long_Integer (Last) < Long_Long_Integer'Last +
+              Long_Long_Integer (First))
+         and then
+         Last < Storage_Offset'Last - Storage_Offset(r/8))
+      else
+         Last < Storage_Offset'Last - Storage_Offset(r/8)
+   );
 
    type State is array (Integer range 0..15) of Word;
 
@@ -131,23 +157,23 @@ private
    function Initialise (Key : in Key_Type; Nonce : in Nonce_Type) return State;
 
    procedure Absorb (S : in out State; X : in Storage_Array; v : in Word)
-     with Pre=> (Valid_Storage_Array_Parameter(X'Length, X'Last));
+     with Pre=> (Valid_Storage_Array_Parameter(X));
 
    procedure Encrypt (S : in out State;
                       M : in Storage_Array;
                       C : out Storage_Array;
                       v : in Word)
-     with Pre => (C'Length = M'Length and
-                    Valid_Storage_Array_Parameter(M'Length, M'Last) and
-                      Valid_Storage_Array_Parameter(C'Length, C'Last));
+     with Pre => ( (Valid_Storage_Array_Parameter(M) and
+                     Valid_Storage_Array_Parameter(C'First, C'Last)) and then
+                     C'Length = M'Length);
 
    procedure Decrypt (S : in out State;
                       C : in Storage_Array;
                       M : out Storage_Array;
                       v : in Word)
-     with Pre => (C'Length = M'Length and
-                    Valid_Storage_Array_Parameter(C'Length, C'Last) and
-                      Valid_Storage_Array_Parameter(M'Length, M'Last));
+     with Pre => ( (Valid_Storage_Array_Parameter(C) and
+                     Valid_Storage_Array_Parameter(M'First, M'Last)) and then
+                     C'Length = M'Length);
 
    procedure Finalise (S : in out State;
                        Key : in Key_Type;
