@@ -2,7 +2,7 @@
 -- an Ada implementation of the NORX Authenticated Encryption Algorithm
 -- created by Jean-Philippe Aumasson, Philipp Jovanovic and Samuel Neves
 
--- Copyright (c) 2016-2017, James Humphry - see LICENSE file for details
+-- Copyright (c) 2016-2018, James Humphry - see LICENSE file for details
 
 pragma Restrictions(No_Implementation_Attributes,
                     No_Implementation_Units,
@@ -103,7 +103,7 @@ package NORX is
    -- M : contains the decrypted C or zero if the input does not authenticate
    -- Valid : indicates if the input authenticates correctly
 
-   type State(<>) is private;
+   type State is private;
    -- This type declaration makes the NORX.Access_Internals package easier to
    -- write. It is not intended for normal use.
 
