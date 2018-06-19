@@ -3,18 +3,15 @@
 -- Ensure that headers and trailers of different lengths are accepted
 -- and messages of different lengths correctly decrypted (to check padding)
 
--- Copyright (c) 2016, James Humphry - see LICENSE file for details
+-- Copyright (c) 2016-2018, James Humphry - see LICENSE file for details
 
 with Ada.Text_IO;
 use Ada.Text_IO;
 
 with System.Storage_Elements;
-use System.Storage_Elements;
 
 with Interfaces;
 use Interfaces;
-
-with NORX.Utils;
 
 procedure Test_Input_Lengths is
 
@@ -23,9 +20,6 @@ procedure Test_Input_Lengths is
    package Storage_Offset_Text_IO is
      new Ada.Text_IO.Integer_IO(Num => Storage_Offset);
    use Storage_Offset_Text_IO;
-
-   package NORX_Utils is new NORX_Package.Utils;
-   use NORX_Utils;
 
    function Generate (G : in out Unsigned_64) return Storage_Element is
       -- xorshift64 generator from: An experimental exploration of Marsaglia's
